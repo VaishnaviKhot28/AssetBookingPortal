@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Assets | Asset Booking Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #333;
+        }
+
+        /* Navigation Bar */
+        .top-nav {
+            background: #172b4d;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #72e6b1;
+        }
+
+        .nav-links a.active {
+            color: #72e6b1;
+            font-weight: bold;
+            border-bottom: 2px solid #72e6b1;
+            padding-bottom: 5px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1250px;
+            margin: 35px auto;
+            padding: 0 25px;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+            color: #172554;
+            font-size: 34px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 22px;
+            line-height: 1.6;
+        }
+
+        /* Buttons */
+        .back {
+            display: inline-block;
+            padding: 11px 17px;
+            background: #1d4ed8;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .back:hover {
+            background: #1e40af;
+        }
+
+        .book {
+            display: inline-block;
+            padding: 11px 15px;
+            background: #16a34a;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .book:hover {
+            background: #15803d;
+        }
+
+        /* Asset Cards */
+        .assets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+
+        .card img {
+            display: block;
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            background: #e5e7eb;
+        }
+
+        .info {
+            padding: 22px;
+        }
+
+        .info h2 {
+            margin-top: 0;
+            margin-bottom: 12px;
+            color: #172554;
+            font-size: 22px;
+        }
+
+        .info p {
+            color: #666;
+            line-height: 1.6;
+            min-height: 48px;
+            margin-bottom: 20px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 45px;
+            padding: 22px;
+            background: #172b4d;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .top-nav {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .container {
+                margin-top: 25px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 18px;
+            }
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .nav-links {
+                gap: 13px;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+            }
+
+            .container {
+                padding: 0 14px;
+            }
+
+            h1 {
+                font-size: 28px;
+            }
+
+            .assets {
+                grid-template-columns: 1fr;
+            }
+
+            .card img {
+                height: 210px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="top-nav">
+
+        <div class="brand">Asset Booking Portal</div>
+
+        <nav class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+            <a th:href="@{/laptops}">Laptops</a>
+            <a th:href="@{/projectors}">Projectors</a>
+            <a th:href="@{/my-bookings}">My Bookings</a>
+            <a th:href="@{/my-account}">My Account</a>
+            <a th:href="@{/admin/assets}">Admin Panel</a>
+        </nav>
+
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <div class="page-header">
+            <h1>All Assets</h1>
+
+            <p class="subtitle">
+                View and book available assets for your work.
+            </p>
+
+           
+        </div>
+
+        <!-- Asset Cards -->
+        <div class="assets">
+
+            <!-- Meeting Room -->
+            <div class="card">
+
+                <img th:src="@{/images/meeting-room.jpg}"
+                     src="/images/meeting-room.jpg"
+                     alt="Meeting Room">
+
+                <div class="info">
+                    <h2>Meeting Room</h2>
+
+                    <p>
+                        Book a meeting room for team meetings,
+                        discussions, and presentations.
+                    </p>
+
+                    <a th:href="@{/meeting-rooms}" class="book">
+                        View Meeting Rooms
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Laptop -->
+            <div class="card">
+
+                <img th:src="@{/images/laptop.jpg}"
+                     src="/images/laptop.jpg"
+                     alt="Laptop">
+
+                <div class="info">
+                    <h2>Laptops</h2>
+
+                    <p>
+                        Book a laptop for development,
+                        testing, and other work requirements.
+                    </p>
+
+                    <a th:href="@{/laptops}" class="book">
+                        View Laptops
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Projector -->
+            <div class="card">
+
+                <img th:src="@{/images/projector.jpg}"
+                     src="/images/projector.jpg"
+                     alt="Projector">
+
+                <div class="info">
+                    <h2>Projectors</h2>
+
+                    <p>
+                        Book a projector for presentations,
+                        training sessions, and meetings.
+                    </p>
+
+                    <a th:href="@{/projectors}" class="book">
+                        View Projectors
+                    </a>
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Asset Booking Portal | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

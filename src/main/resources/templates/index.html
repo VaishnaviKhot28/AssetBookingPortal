@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asset Booking Dashboard</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, Helvetica, sans-serif;
+        }
+
+        body {
+            background: #f4f7fb;
+            color: #243047;
+        }
+
+        /* SIDEBAR */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 245px;
+            height: 100vh;
+            padding: 25px 15px;
+            background: #14213d;
+            color: white;
+            overflow-y: auto;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: bold;
+            margin-bottom: 35px;
+            padding: 0 10px;
+        }
+
+        .logo span {
+            color: #61a5ff;
+        }
+
+        .nav-title {
+            margin: 22px 10px 12px;
+            color: #9baac4;
+            font-size: 11px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .nav-link {
+            display: block;
+            text-decoration: none;
+            color: #dce5f5;
+            padding: 12px 13px;
+            margin: 5px 0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background: #284b85;
+            color: white;
+        }
+
+        /* MAIN CONTENT */
+        .main {
+            margin-left: 245px;
+            min-height: 100vh;
+        }
+
+        .topbar {
+            min-height: 75px;
+            padding: 15px 32px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            box-shadow: 0 2px 10px rgba(20, 33, 61, 0.05);
+        }
+
+        .topbar h2 {
+            font-size: 21px;
+        }
+
+        .topbar-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .welcome {
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        .profile {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #2864dc;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .page-heading {
+            margin-bottom: 25px;
+        }
+
+        .page-heading h1 {
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .page-heading p {
+            color: #718096;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* STATISTICS */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 22px;
+            border-radius: 13px;
+            box-shadow: 0 4px 18px rgba(20, 33, 61, 0.05);
+        }
+
+        .stat-card p {
+            color: #718096;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .stat-card h2 {
+            font-size: 28px;
+            color: #172b4d;
+        }
+
+        .stat-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        /* ASSET SECTION */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 21px;
+        }
+
+        .section-header p {
+            color: #718096;
+            font-size: 13px;
+            margin-top: 6px;
+        }
+
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 22px;
+        }
+
+        .asset-card {
+            background: white;
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 4px 18px rgba(20, 33, 61, 0.06);
+            transition: transform 0.2s, box-shadow 0.2s;
+            min-width: 0;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(20, 33, 61, 0.1);
+        }
+
+        /* IMAGE SLIDER */
+        .asset-slider {
+            position: relative;
+            width: 100%;
+            height: 210px;
+            overflow: hidden;
+            background: #e8edf5;
+        }
+
+        .asset-slider img {
+            display: none;
+            width: 100%;
+            height: 210px;
+            object-fit: cover;
+        }
+
+        .asset-slider img.active {
+            display: block;
+        }
+
+        .slider-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 36px;
+            height: 36px;
+            border: none;
+            border-radius: 50%;
+            background: rgba(15, 23, 42, 0.75);
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 2;
+        }
+
+        .slider-btn:hover {
+            background: #2563eb;
+        }
+
+        .slider-btn.prev {
+            left: 10px;
+        }
+
+        .slider-btn.next {
+            right: 10px;
+        }
+
+        .slider-count {
+            position: absolute;
+            right: 10px;
+            bottom: 10px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            background: rgba(15, 23, 42, 0.75);
+            color: white;
+            font-size: 12px;
+        }
+
+        /* ASSET DETAILS */
+        .asset-info {
+            padding: 20px;
+        }
+
+        .asset-info h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .asset-info p {
+            color: #718096;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .availability {
+            display: inline-block;
+            margin-bottom: 16px;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #fff3cd;
+            color: #856404;
+            font-size: 12px;
+        }
+
+        .book-button {
+            display: block;
+            width: 100%;
+            text-align: center;
+            text-decoration: none;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: #2563eb;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .book-button:hover {
+            background: #1748b5;
+        }
+
+        .footer {
+            margin-top: 35px;
+            padding: 20px;
+            text-align: center;
+            color: #8793a7;
+            font-size: 12px;
+        }
+
+        /* RESPONSIVE DESIGN */
+        @media (max-width: 1100px) {
+            .asset-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 750px) {
+            .sidebar {
+                position: relative;
+                width: 100%;
+                height: auto;
+                max-height: none;
+            }
+
+            .main {
+                margin-left: 0;
+            }
+
+            .topbar {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .asset-grid,
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .content {
+                padding: 14px;
+            }
+
+            .topbar h2 {
+                font-size: 19px;
+            }
+
+            .page-heading h1 {
+                font-size: 23px;
+            }
+
+            .stat-card {
+                padding: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="logo">
+            Asset<span>Portal</span>
+        </div>
+
+        <div class="nav-title">Workspace</div>
+
+        <nav>
+            <a href="/dashboard" class="nav-link active">▦ &nbsp; Dashboard</a>
+            <a href="/dashboard#assets" class="nav-link">▣ &nbsp; All Assets</a>
+            <a href="/meeting-rooms" class="nav-link">🏢 &nbsp; Meeting Rooms</a>
+            <a href="/laptops" class="nav-link">💻 &nbsp; Laptops</a>
+            <a href="/projectors" class="nav-link">📽️ &nbsp; Projectors</a>
+            <a href="/booking" class="nav-link">▦ &nbsp; Booking</a>
+            <a href="/my-bookings" class="nav-link">◷ &nbsp; My Bookings</a>
+            <a href="/booking-history" class="nav-link">📋 &nbsp; Booking History</a>
+        </nav>
+
+        <div class="nav-title">Management</div>
+
+        <nav>
+            <a href="/weekly-calendar" class="nav-link">📅 &nbsp; Weekly Calendar</a>
+            <a href="/admin/assets" class="nav-link">⚙ &nbsp; Admin Panel</a>
+            <a href="/reports" class="nav-link">▥ &nbsp; Reports</a>
+            <a href="/ai-booking" class="nav-link">✦ &nbsp; AI Booking</a>
+        </nav>
+
+        <div class="nav-title">Account</div>
+
+        <nav>
+            <a href="/my-account" class="nav-link">♙ &nbsp; My Account</a>
+            <a href="/logout" class="nav-link">↪ &nbsp; Logout</a>
+        </nav>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <h2>Dashboard</h2>
+
+            <div class="topbar-right">
+                <span class="welcome">
+                    Welcome,
+                    <span th:text="${displayName}">User</span>
+                </span>
+
+                <div class="profile"
+                     title="User Profile"
+                     th:text="${#strings.isEmpty(displayName) ? 'U' : #strings.substring(displayName, 0, 1)}">
+                    U
+                </div>
+            </div>
+        </header>
+
+        <!-- DASHBOARD CONTENT -->
+        <div class="content">
+
+            <section class="page-heading">
+                <h1>Asset Booking Dashboard</h1>
+                <p>
+                    Manage shared assets, check availability and book resources
+                    for your work.
+                </p>
+            </section>
+
+            <!-- STATISTICS -->
+            <section class="stats">
+
+                <div class="stat-card">
+                    <div class="stat-icon">▣</div>
+                    <p>Total Assets</p>
+                    <h2 th:text="${totalAssets}">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">✓</div>
+                    <p>Available Assets</p>
+                    <h2 th:text="${availableAssets}">0</h2>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-icon">◷</div>
+                    <p>Active Bookings</p>
+                    <h2 th:text="${activeBookings}">0</h2>
+                </div>
+
+            </section>
+
+            <!-- ASSET SECTION -->
+            <section id="assets">
+
+                <div class="section-header">
+                    <div>
+                        <h2>Available Assets</h2>
+                        <p>Select an asset category to start your booking.</p>
+                    </div>
+                </div>
+
+                <div class="asset-grid">
+
+                    <!-- MEETING ROOM -->
+                    <article class="asset-card">
+
+                        <div class="asset-slider">
+                            <img src="/images/meeting-room.jpg" class="active" alt="Meeting Room 1">
+                            <img src="/images/meeting-room-2.jpg" alt="Meeting Room 2">
+                            <img src="/images/meeting-room-3.jpg" alt="Meeting Room 3">
+                            <img src="/images/meeting-room-4.jpg" alt="Meeting Room 4">
+                            <img src="/images/meeting-room-5.jpg" alt="Meeting Room 5">
+                            <img src="/images/meeting-room-6.jpg" alt="Meeting Room 6">
+                            <img src="/images/meeting-room-7.jpg" alt="Meeting Room 7">
+                            <img src="/images/meeting-room-8.jpg" alt="Meeting Room 8">
+                            <img src="/images/meeting-room-9.jpg" alt="Meeting Room 9">
+                            <img src="/images/meeting-room-10.jpg" alt="Meeting Room 10">
+                            <img src="/images/meeting-room-11.jpg" alt="Meeting Room 11">
+                            <img src="/images/meeting-room-12.jpg" alt="Meeting Room 12">
+
+                            <button type="button" class="slider-btn prev"
+                                    aria-label="Previous meeting room image"
+                                    onclick="changeSlide(this, -1)">❮</button>
+
+                            <button type="button" class="slider-btn next"
+                                    aria-label="Next meeting room image"
+                                    onclick="changeSlide(this, 1)">❯</button>
+
+                            <span class="slider-count">1 / 12</span>
+                        </div>
+
+                        <div class="asset-info">
+                            <h3>Meeting Room</h3>
+                            <p>
+                                Reserve a comfortable meeting space for team
+                                discussions, meetings and presentations.
+                            </p>
+
+                            <span class="availability">● Check availability before booking</span>
+
+                            <a href="/meeting-rooms" class="book-button">View Meeting Rooms</a>
+                        </div>
+                    </article>
+
+                    <!-- LAPTOP -->
+                    <article class="asset-card">
+
+                        <div class="asset-slider">
+                            <img src="/images/laptop.jpg" class="active" alt="Laptop 1">
+                            <img src="/images/laptop-2.jpg" alt="Laptop 2">
+                            <img src="/images/laptop-3.jpg" alt="Laptop 3">
+                            <img src="/images/laptop-4.jpg" alt="Laptop 4">
+                            <img src="/images/laptop-5.jpg" alt="Laptop 5">
+                            <img src="/images/laptop-6.jpg" alt="Laptop 6">
+                            <img src="/images/laptop-7.jpg" alt="Laptop 7">
+                            <img src="/images/laptop-8.jpg" alt="Laptop 8">
+                            <img src="/images/laptop-9.jpg" alt="Laptop 9">
+                            <img src="/images/laptop-10.jpg" alt="Laptop 10">
+                            <img src="/images/laptop-11.jpg" alt="Laptop 11">
+                            <img src="/images/laptop-12.jpg" alt="Laptop 12">
+
+                            <button type="button" class="slider-btn prev"
+                                    aria-label="Previous laptop image"
+                                    onclick="changeSlide(this, -1)">❮</button>
+
+                            <button type="button" class="slider-btn next"
+                                    aria-label="Next laptop image"
+                                    onclick="changeSlide(this, 1)">❯</button>
+
+                            <span class="slider-count">1 / 12</span>
+                        </div>
+
+                        <div class="asset-info">
+                            <h3>Laptop</h3>
+                            <p>
+                                Reserve a laptop for development, testing,
+                                meetings and everyday office work.
+                            </p>
+
+                            <span class="availability">● Check availability before booking</span>
+
+                            <a href="/laptops" class="book-button">View Laptops</a>
+                        </div>
+                    </article>
+
+                    <!-- PROJECTOR -->
+                    <article class="asset-card">
+
+                        <div class="asset-slider">
+                            <img src="/images/projector.jpg" class="active" alt="Projector 1">
+                            <img src="/images/projector-2.jpg" alt="Projector 2">
+                            <img src="/images/projector-3.jpg" alt="Projector 3">
+                            <img src="/images/projector-4.jpg" alt="Projector 4">
+                            <img src="/images/projector-5.jpg" alt="Projector 5">
+                            <img src="/images/projector-6.jpg" alt="Projector 6">
+                            <img src="/images/projector-7.jpg" alt="Projector 7">
+                            <img src="/images/projector-8.jpg" alt="Projector 8">
+                            <img src="/images/projector-9.jpg" alt="Projector 9">
+                            <img src="/images/projector-10.jpg" alt="Projector 10">
+                            <img src="/images/projector-11.jpg" alt="Projector 11">
+                            <img src="/images/projector-12.jpg" alt="Projector 12">
+
+                            <button type="button" class="slider-btn prev"
+                                    aria-label="Previous projector image"
+                                    onclick="changeSlide(this, -1)">❮</button>
+
+                            <button type="button" class="slider-btn next"
+                                    aria-label="Next projector image"
+                                    onclick="changeSlide(this, 1)">❯</button>
+
+                            <span class="slider-count">1 / 12</span>
+                        </div>
+
+                        <div class="asset-info">
+                            <h3>Projector</h3>
+                            <p>
+                                Reserve a projector for presentations,
+                                training sessions and team meetings.
+                            </p>
+
+                            <span class="availability">● Check availability before booking</span>
+
+                            <a href="/projectors" class="book-button">View Projectors</a>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <footer class="footer">
+                Asset Booking Portal | Manage your shared resources efficiently.
+            </footer>
+
+        </div>
+    </main>
+
+    <!-- IMAGE SLIDER JAVASCRIPT -->
+    <script>
+        function changeSlide(button, direction) {
+            const slider = button.closest(".asset-slider");
+            const images = slider.querySelectorAll("img");
+            const counter = slider.querySelector(".slider-count");
+
+            let currentIndex = -1;
+
+            images.forEach((img, index) => {
+                if (img.classList.contains("active")) {
+                    currentIndex = index;
+                }
+            });
+
+            if (currentIndex === -1 || images.length === 0) {
+                return;
+            }
+
+            images[currentIndex].classList.remove("active");
+
+            const nextIndex =
+                (currentIndex + direction + images.length) % images.length;
+
+            images[nextIndex].classList.add("active");
+            counter.textContent = (nextIndex + 1) + " / " + images.length;
+        }
+    </script>
+
+</body>
+</html>

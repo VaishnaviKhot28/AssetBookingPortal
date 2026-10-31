@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Weekly Booking Calendar | Asset Booking Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #334155;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            background: #243b64;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.10);
+        }
+
+        .logo {
+            color: white;
+            font-size: 21px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 13px;
+            border-radius: 7px;
+            font-size: 14px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #ea6045;
+        }
+
+        .nav-links a.active {
+            background: #405d91;;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+        }
+
+        h1 {
+            color: #fa765b;
+            margin-top: 0;
+        }
+
+        .top-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .top-bar p {
+            color: #64748b;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 12px 18px;
+            border: none;
+            border-radius: 9px;
+            cursor: pointer;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: #fa765b;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #ea6045;
+        }
+
+        .btn-secondary {
+            background: #e8edf5;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background: #d7dfeb;
+        }
+
+        /* Week Navigation */
+        .week-navigation {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .week-navigation strong {
+            font-size: 16px;
+        }
+
+        /* Booking Status Legend */
+        .legend {
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+        }
+
+        .legend-color {
+            width: 16px;
+            height: 16px;
+            border-radius: 4px;
+        }
+
+        .blue {
+            background: #dbeafe;
+            border: 1px solid #2563eb;
+        }
+
+        .red {
+            background: #fee2e2;
+            border: 1px solid #dc2626;
+        }
+
+        .green {
+            background: #dcfce7;
+            border: 1px solid #16a34a;
+        }
+
+        /* Calendar Grid */
+        .calendar-wrapper {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: 80px repeat(7, minmax(140px, 1fr));
+            min-width: 1100px;
+            border-top: 1px solid #e2e8f0;
+            border-left: 1px solid #e2e8f0;
+        }
+
+        .cell {
+            min-height: 85px;
+            padding: 10px;
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .header-cell {
+            min-height: 85px;
+            text-align: center;
+            background: #fff4f0;
+            font-weight: bold;
+        }
+
+        .header-cell small {
+            display: block;
+            margin-top: 8px;
+            color: #64748b;
+            font-weight: normal;
+        }
+
+        .time-cell {
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-top: 18px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 13px;
+        }
+
+        /* Booking Slots */
+        .slot {
+            min-height: 65px;
+            margin-bottom: 6px;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 12px;
+            overflow-wrap: anywhere;
+        }
+
+        .slot.available {
+            background: #dcfce7;
+            border-left: 4px solid #16a34a;
+            color: #166534;
+        }
+
+        .slot.booked {
+            background: #dbeafe;
+            border-left: 4px solid #2563eb;
+            color: #1e40af;
+        }
+
+        .slot.cancelled {
+            background: #fee2e2;
+            border-left: 4px solid #dc2626;
+            color: #991b1b;
+        }
+
+        .slot strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .slot p {
+            margin: 6px 0 0;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .navbar {
+                padding: 15px;
+            }
+
+            .logo {
+                font-size: 18px;
+            }
+
+            .nav-links a {
+                padding: 8px 10px;
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 12px;
+            }
+
+            .week-navigation {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+
+        <a th:href="@{/dashboard}" class="logo">
+            Asset Booking Portal
+        </a>
+
+        <div class="nav-links">
+
+            <a th:href="@{/dashboard}">
+                Dashboard
+            </a>
+
+            <a th:href="@{/weekly-calendar}" class="active">
+                Weekly Calendar
+            </a>
+
+            <a th:href="@{/booking}">
+                New Booking
+            </a>
+
+            <a th:href="@{/booking-history}">
+                Booking History
+            </a>
+
+            <a th:href="@{/admin}">
+                Admin Panel
+            </a>
+			<a th:href="@{/all-Assets}">
+				</a>
+
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="container">
+
+        <!-- Page Heading -->
+        <div class="top-bar">
+
+            <div>
+                <h1>Weekly Booking Calendar</h1>
+                <p>View asset availability and booking status.</p>
+            </div>
+
+            <div>
+                <a th:href="@{/dashboard}" class="btn btn-secondary">
+                    Dashboard
+                </a>
+
+                <a th:href="@{/booking}" class="btn btn-primary">
+                    + New Booking
+                </a>
+            </div>
+
+        </div>
+
+        <!-- Previous and Next Week -->
+        <div class="week-navigation">
+
+            <a class="btn btn-secondary"
+               th:href="@{/weekly-calendar(week=${previousWeek})}">
+                &larr; Previous Week
+            </a>
+
+            <strong>
+                <span th:text="${#temporals.format(startDate, 'dd MMM yyyy')}">
+                    26 Oct 2026
+                </span>
+
+                &mdash;
+
+                <span th:text="${#temporals.format(endDate, 'dd MMM yyyy')}">
+                    01 Nov 2026
+                </span>
+            </strong>
+
+            <a class="btn btn-secondary"
+               th:href="@{/weekly-calendar(week=${nextWeek})}">
+                Next Week &rarr;
+            </a>
+
+        </div>
+
+        <!-- Booking Status Legend -->
+        <div class="legend">
+
+            <div class="legend-item">
+                <span class="legend-color blue"></span>
+                Booked
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-color red"></span>
+                Cancelled
+            </div>
+
+            <div class="legend-item">
+                <span class="legend-color green"></span>
+                Available
+            </div>
+
+        </div>
+
+        <!-- Weekly Calendar -->
+        <div class="calendar-wrapper">
+
+            <div class="calendar">
+
+                <!-- Header Row -->
+                <div class="cell header-cell">
+                    Time
+                </div>
+
+                <div class="cell header-cell"
+                     th:each="dayOffset : ${#numbers.sequence(0, 6)}">
+
+                    <span th:text="${#temporals.dayOfWeekName(startDate.plusDays(dayOffset))}">
+                        Monday
+                    </span>
+
+                    <small th:text="${#temporals.format(startDate.plusDays(dayOffset), 'dd MMM yyyy')}">
+                        26 Oct 2026
+                    </small>
+
+                    <small>09:00 - 17:00</small>
+
+                </div>
+
+                <!-- Hourly Rows: 09:00 to 16:00 -->
+                <th:block th:each="hour : ${#numbers.sequence(9, 16)}">
+
+                    <!-- Time Column -->
+                    <div class="cell time-cell"
+                         th:text="${#temporals.format(T(java.time.LocalTime).of(hour, 0), 'HH:mm')}">
+                        09:00
+                    </div>
+
+                    <!-- One Cell for Each Day -->
+                    <div class="cell"
+                         th:each="dayOffset : ${#numbers.sequence(0, 6)}">
+
+                        <th:block th:with="
+                            cellDate=${startDate.plusDays(dayOffset)},
+                            slotStart=${T(java.time.LocalTime).of(hour, 0)},
+                            slotEnd=${T(java.time.LocalTime).of(hour + 1, 0)}">
+
+                            <th:block th:with="
+                                matchingBookings=${bookings.?[
+                                    bookingDate != null
+                                    and bookingDate.equals(#vars.cellDate)
+                                    and startTime != null
+                                    and endTime != null
+                                    and startTime.isBefore(#vars.slotEnd)
+                                    and endTime.isAfter(#vars.slotStart)
+                                ]}">
+
+                                <!-- Booking Details -->
+                                <div th:each="booking : ${matchingBookings}"
+                                     class="slot"
+                                     th:classappend="${booking.status != null and #strings.equalsIgnoreCase(booking.status, 'CANCELLED')} ? ' cancelled' : (${booking.status != null and #strings.equalsIgnoreCase(booking.status, 'BOOKED')} ? ' booked' : '')">
+
+                                    <strong th:text="${booking.status}">
+                                        BOOKED
+                                    </strong>
+
+                                    <span th:if="${booking.asset != null}"
+                                          th:text="${booking.asset.assetName}">
+                                        Projector
+                                    </span>
+
+                                    <br>
+
+                                    <span th:text="${#temporals.format(booking.startTime, 'HH:mm') + ' - ' + #temporals.format(booking.endTime, 'HH:mm')}">
+                                        10:00 - 11:00
+                                    </span>
+
+                                    <p th:if="${booking.description != null and !booking.description.isEmpty()}"
+                                       th:text="${booking.description}">
+                                        Booking description
+                                    </p>
+
+                                </div>
+
+                                <!-- Available Slot -->
+                                <div class="slot available"
+                                     th:if="${#lists.isEmpty(matchingBookings)}">
+
+                                    <strong>Available</strong>
+                                    Free slot
+
+                                </div>
+
+                            </th:block>
+                        </th:block>
+
+                    </div>
+
+                </th:block>
+
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

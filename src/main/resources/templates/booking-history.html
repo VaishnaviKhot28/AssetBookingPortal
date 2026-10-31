@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking History | Asset Booking Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f4f7fc;
+            color: #243b64;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            background: #243b64;
+            padding: 18px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .logo {
+            color: white;
+            font-size: 25px;
+            font-weight: bold;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 14px;
+            border-radius: 7px;
+            font-size: 15px;
+            transition: background 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: #405d91;
+        }
+
+        /* Main Content — Same Layout */
+        .container {
+            width: 92%;
+            max-width: 1600px;
+            margin: 35px auto;
+            padding: 35px 40px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.07);
+        }
+
+        .page-header {
+            margin-bottom: 28px;
+        }
+
+        h1 {
+            font-size: 34px;
+            color: #243b64;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #6b7280;
+            margin-top: 8px;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        /* Booking History Table */
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: white;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px;
+        }
+
+        th,
+        td {
+            padding: 19px 16px;
+            text-align: center;
+            border-bottom: 1px solid #e5e7eb;
+            font-size: 16px;
+        }
+
+        th {
+            background: #243b64;
+            color: white;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f5f8ff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Booking ID */
+        .booking-id {
+            font-weight: 600;
+            color: #243b64;
+        }
+
+        /* Booking Status */
+        .status {
+            display: inline-block;
+            padding: 9px 16px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .status-booked {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-unavailable {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        /* Empty Message */
+        .empty-message {
+            text-align: center;
+            padding: 35px;
+            color: #777;
+            font-size: 15px;
+            line-height: 1.8;
+            white-space: normal;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1100px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: flex-start;
+            }
+
+            .container {
+                width: 95%;
+                padding: 25px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 16px 4%;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .nav-links {
+                gap: 5px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+                padding: 9px;
+            }
+
+            .container {
+                width: 95%;
+                padding: 18px 12px;
+                margin: 20px auto;
+            }
+
+            h1 {
+                font-size: 26px;
+            }
+
+            .subtitle {
+                font-size: 14px;
+            }
+
+            th,
+            td {
+                padding: 14px 12px;
+                font-size: 14px;
+            }
+
+            .status {
+                font-size: 12px;
+                padding: 7px 11px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+
+        <a th:href="@{/dashboard}" class="logo">
+            Asset Booking Portal
+        </a>
+
+        <div class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+            <a th:href="@{/laptops}">Laptops</a>
+            <a th:href="@{/projectors}">Projectors</a>
+            <a th:href="@{/my-bookings}">My Bookings</a>
+            <a th:href="@{/booking-history}" class="active">Booking History</a>
+            <a th:href="@{/my-account}">My Account</a>
+            <a th:href="@{/admin/assets}">Admin Panel</a>
+        </div>
+
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <!-- Page Heading -->
+        <div class="page-header">
+            <h1>Booking History</h1>
+
+            <p class="subtitle">
+                View your asset booking records and their current status.
+            </p>
+        </div>
+
+        <!-- Booking History Table -->
+        <div class="table-wrapper">
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Booking ID</th>
+                        <th>Asset</th>
+                        <th>Date</th>
+                        <th>Start Time</th>
+                        <th>End Time</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr th:each="booking : ${bookings}">
+
+                        <td class="booking-id"
+                            th:text="${booking.bookingId}">
+                            1
+                        </td>
+
+                        <td th:text="${booking.asset.assetName}">
+                            Meeting Room 1
+                        </td>
+
+                        <td th:text="${booking.bookingDate}">
+                            2026-10-29
+                        </td>
+
+                        <td th:text="${booking.startTime}">
+                            10:00
+                        </td>
+
+                        <td th:text="${booking.endTime}">
+                            11:00
+                        </td>
+
+                        <td>
+                            <span class="status"
+                                  th:classappend="${booking.status == 'BOOKED'} ? ' status-booked' : (${booking.status == 'CANCELLED'} ? ' status-cancelled' : ' status-unavailable')"
+                                  th:text="${booking.status}">
+                                BOOKED
+                            </span>
+                        </td>
+
+                    </tr>
+
+                    <!-- Empty State -->
+                    <tr th:if="${#lists.isEmpty(bookings)}">
+                        <td colspan="6" class="empty-message">
+                            No booking history found.
+                            <br><br>
+                            Your booking records will appear here.
+                        </td>
+                    </tr>
+
+                </tbody>
+            </table>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; 2026 Asset Booking Portal. All rights reserved.
+    </footer>
+
+</body>
+</html>

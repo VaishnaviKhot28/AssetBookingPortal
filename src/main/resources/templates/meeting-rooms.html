@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Meeting Rooms | Asset Booking Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #263238;
+        }
+
+        /* Navigation Bar */
+        .top-nav {
+            background: #172b4d;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .top-nav h2 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #72e6b1;
+        }
+
+        .nav-links a.active {
+            color: #72e6b1;
+            font-weight: bold;
+            border-bottom: 2px solid #72e6b1;
+            padding-bottom: 5px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        /* Page Heading */
+        h1 {
+            margin-top: 35px;
+            color: #243b64;
+            font-size: 40px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #607d8b;
+            font-size: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Meeting Room Grid */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 30px;
+        }
+
+        /* Meeting Room Card */
+        .asset-card {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.13);
+        }
+
+        .asset-card img {
+            display: block;
+            width: 100%;
+            height: 265px;
+            object-fit: cover;
+            background-color: #e9eef5;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-content h3 {
+            margin: 0 0 20px;
+            color: #243b64;
+            font-size: 25px;
+        }
+
+        .description {
+            min-height: 50px;
+            color: #607d8b;
+            font-size: 17px;
+            line-height: 1.5;
+        }
+
+        /* Rent */
+        .rent {
+            color: #198754;
+            font-size: 21px;
+            font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 15px;
+        }
+
+        .rent-note {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: -8px;
+        }
+
+        /* Book Now Button */
+        .book-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            text-align: center;
+            background-color: #243b64;
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .book-btn:hover {
+            background-color: #172b4d;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 22px;
+            background: #172b4d;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Tablet */
+        @media (max-width: 1000px) {
+            .asset-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .top-nav {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 650px) {
+            .container {
+                padding: 15px;
+            }
+
+            .top-nav {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-nav h2 {
+                font-size: 22px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .asset-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .asset-card img {
+                height: 230px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="top-nav">
+
+        <h2>Asset Booking Portal</h2>
+
+        <nav class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+
+            <a th:href="@{/meeting-rooms}" class="active">
+                Meeting Rooms
+            </a>
+
+            <a th:href="@{/laptops}">Laptops</a>
+
+            <a th:href="@{/projectors}">Projectors</a>
+
+            <a th:href="@{/my-bookings}">My Bookings</a>
+
+            <a th:href="@{/admin/assets}">Admin Panel</a>
+        </nav>
+
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <h1>Meeting Rooms</h1>
+
+        <p class="subtitle">
+            Explore meeting rooms, check the hourly rent and book a suitable room.
+        </p>
+
+        <div class="asset-grid">
+
+            <!-- Meeting Room 1 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room.jpg}"
+                     alt="Meeting Room 1">
+
+                <div class="card-content">
+                    <h3>Meeting Room 1</h3>
+
+                    <p class="description">
+                        Meeting room for team discussions and collaboration.
+                    </p>
+
+                    <p class="rent">Rent: ₹500 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 2 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-2.jpg}"
+                     alt="Meeting Room 2">
+
+                <div class="card-content">
+                    <h3>Meeting Room 2</h3>
+
+                    <p class="description">
+                        Comfortable room for small team meetings.
+                    </p>
+
+                    <p class="rent">Rent: ₹400 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 3 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-3.jpg}"
+                     alt="Meeting Room 3">
+
+                <div class="card-content">
+                    <h3>Meeting Room 3</h3>
+
+                    <p class="description">
+                        Meeting space for project planning sessions.
+                    </p>
+
+                    <p class="rent">Rent: ₹600 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 4 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-4.jpg}"
+                     alt="Meeting Room 4">
+
+                <div class="card-content">
+                    <h3>Meeting Room 4</h3>
+
+                    <p class="description">
+                        Room for team meetings and presentations.
+                    </p>
+
+                    <p class="rent">Rent: ₹450 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 5 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-5.jpg}"
+                     alt="Meeting Room 5">
+
+                <div class="card-content">
+                    <h3>Meeting Room 5</h3>
+
+                    <p class="description">
+                        Meeting space for discussions and reviews.
+                    </p>
+
+                    <p class="rent">Rent: ₹550 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 6 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-6.jpg}"
+                     alt="Meeting Room 6">
+
+                <div class="card-content">
+                    <h3>Meeting Room 6</h3>
+
+                    <p class="description">
+                        Room for project meetings and planning.
+                    </p>
+
+                    <p class="rent">Rent: ₹500 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 7 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-7.jpg}"
+                     alt="Meeting Room 7">
+
+                <div class="card-content">
+                    <h3>Meeting Room 7</h3>
+
+                    <p class="description">
+                        Space for team collaboration and training.
+                    </p>
+
+                    <p class="rent">Rent: ₹650 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 8 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-8.jpg}"
+                     alt="Meeting Room 8">
+
+                <div class="card-content">
+                    <h3>Meeting Room 8</h3>
+
+                    <p class="description">
+                        Room for business discussions and reviews.
+                    </p>
+
+                    <p class="rent">Rent: ₹400 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 9 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-9.jpg}"
+                     alt="Meeting Room 9">
+
+                <div class="card-content">
+                    <h3>Meeting Room 9</h3>
+
+                    <p class="description">
+                        Meeting room for project teams.
+                    </p>
+
+                    <p class="rent">Rent: ₹500 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 10 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-10.jpg}"
+                     alt="Meeting Room 10">
+
+                <div class="card-content">
+                    <h3>Meeting Room 10</h3>
+
+                    <p class="description">
+                        Room for presentations and team meetings.
+                    </p>
+
+                    <p class="rent">Rent: ₹700 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 11 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-11.jpg}"
+                     alt="Meeting Room 11">
+
+                <div class="card-content">
+                    <h3>Meeting Room 11</h3>
+
+                    <p class="description">
+                        Room for presentations and team meetings.
+                    </p>
+
+                    <p class="rent">Rent: ₹550 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+            <!-- Meeting Room 12 -->
+            <div class="asset-card">
+                <img th:src="@{/images/meeting-room-12.jpg}"
+                     alt="Meeting Room 12">
+
+                <div class="card-content">
+                    <h3>Meeting Room 12</h3>
+
+                    <p class="description">
+                        Room for presentations and team meetings.
+                    </p>
+
+                    <p class="rent">Rent: ₹600 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+
+                    <a th:href="@{/booking(assetType='Meeting Room')}"
+                       class="book-btn">
+                        Book Now
+                    </a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Asset Booking Portal | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

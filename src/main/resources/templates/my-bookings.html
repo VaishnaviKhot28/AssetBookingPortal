@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Bookings | Asset Booking Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #243b64;
+            --primary-light: #405d91;
+            --background: #f3f6fc;
+            --text: #243b64;
+            --muted: #64748b;
+            --border: #e2e8f0;
+            --white: #ffffff;
+            --blue: #2563eb;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar - Single Row */
+        .navbar {
+            width: 100%;
+            background: var(--primary);
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: nowrap;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .logo {
+            color: white;
+            font-size: 23px;
+            font-weight: bold;
+            text-decoration: none;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            flex-wrap: nowrap;
+            gap: 5px;
+            min-width: 0;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 11px;
+            border-radius: 7px;
+            font-size: 14px;
+            white-space: nowrap;
+            transition: background 0.25s ease;
+        }
+
+        .nav-links a:hover,
+        .nav-links a.active {
+            background: var(--primary-light);
+        }
+
+        /* Main Content */
+        .main-content {
+            width: 100%;
+            min-width: 0;
+            padding: 28px 4%;
+        }
+
+        /* Top Bar */
+        .topbar {
+            width: 100%;
+            background: white;
+            padding: 22px 28px;
+            border-radius: 15px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .topbar h1 {
+            font-size: 29px;
+            color: var(--primary);
+        }
+
+        .welcome {
+            color: var(--muted);
+            font-size: 15px;
+            white-space: nowrap;
+        }
+
+        /* Page Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .page-header h2 {
+            font-size: 30px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .new-booking-btn {
+            display: inline-block;
+            padding: 13px 20px;
+            background: var(--blue);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: bold;
+            transition: background 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .new-booking-btn:hover {
+            background: #1d4ed8;
+        }
+
+        /* Booking Details Card */
+        .booking-card {
+            width: 100%;
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .booking-card h3 {
+            font-size: 23px;
+            margin-bottom: 24px;
+            color: var(--text);
+        }
+
+        /* Responsive Booking Table */
+        .table-wrapper {
+            width: 100%;
+            max-width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+        }
+
+        table {
+            width: 100%;
+            min-width: 850px;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        thead th {
+            background: #eff6ff;
+            color: #243b64;
+            padding: 17px 16px;
+            text-align: left;
+            font-size: 15px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        tbody td {
+            padding: 20px 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 15px;
+            color: #334968;
+            white-space: nowrap;
+        }
+
+        tbody tr {
+            transition: background 0.2s ease;
+        }
+
+        tbody tr:hover {
+            background: #f8faff;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Booking Status */
+        .status {
+            display: inline-block;
+            padding: 9px 15px;
+            border-radius: 25px;
+            font-size: 13px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .status-booked {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .status-cancelled {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .status-other {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Cancel Booking Button */
+        .cancel-btn {
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            background: #fee2e2;
+            color: #b91c1c;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .cancel-btn:hover {
+            background: #fecaca;
+        }
+
+        .cancelled-text {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            padding: 45px 20px;
+            text-align: center;
+            color: var(--muted);
+            line-height: 1.8;
+            white-space: normal;
+        }
+
+        .empty-state .icon {
+            display: block;
+            font-size: 38px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state h4 {
+            color: var(--text);
+            font-size: 20px;
+            margin-bottom: 8px;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 25px 10px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Laptop and Smaller Desktop Screens */
+        @media (max-width: 1250px) {
+            .navbar {
+                gap: 12px;
+            }
+
+            .logo {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                gap: 2px;
+            }
+
+            .nav-links a {
+                padding: 10px 8px;
+                font-size: 12px;
+            }
+        }
+
+        /* Tablet and Mobile */
+        @media (max-width: 900px) {
+            .navbar {
+                flex-wrap: wrap;
+            }
+
+            .nav-links {
+                width: 100%;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+                padding: 10px 11px;
+            }
+
+            .main-content {
+                padding: 20px 3%;
+            }
+
+            .booking-card {
+                padding: 22px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 16px 4%;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .main-content {
+                padding: 15px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 18px;
+                margin-bottom: 22px;
+            }
+
+            .topbar h1 {
+                font-size: 25px;
+            }
+
+            .welcome {
+                white-space: normal;
+            }
+
+            .page-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-header h2 {
+                font-size: 25px;
+            }
+
+            .page-header p {
+                font-size: 14px;
+            }
+
+            .new-booking-btn {
+                width: 100%;
+                text-align: center;
+            }
+
+            .booking-card {
+                padding: 18px 12px;
+            }
+
+            .booking-card h3 {
+                font-size: 20px;
+            }
+
+            thead th,
+            tbody td {
+                padding: 14px 12px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+
+        <a th:href="@{/dashboard}" class="logo">
+            Asset Booking Portal
+        </a>
+
+        <div class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+            <a th:href="@{/laptops}">Laptops</a>
+            <a th:href="@{/projectors}">Projectors</a>
+            <a th:href="@{/my-bookings}" class="active">My Bookings</a>
+            <a th:href="@{/booking-history}">Booking History</a>
+            <a th:href="@{/my-account}">My Account</a>
+            <a th:href="@{/admin/assets}">Admin Panel</a>
+        </div>
+
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+
+        <!-- Welcome Header -->
+        <header class="topbar">
+            <h1>My Bookings</h1>
+
+            <p class="welcome">
+                Welcome, <span th:text="${displayName}">User</span>
+            </p>
+        </header>
+
+        <!-- Page Heading -->
+        <section class="page-header">
+            <div>
+                <h2>My Bookings</h2>
+                <p>View and manage your asset bookings.</p>
+            </div>
+
+            <a th:href="@{/booking}" class="new-booking-btn">
+                + New Booking
+            </a>
+        </section>
+
+        <!-- Booking Details -->
+        <section class="booking-card">
+
+            <h3>Booking Details</h3>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Booking ID</th>
+                            <th>Asset Name</th>
+                            <th>Booking Date</th>
+                            <th>Start Time</th>
+                            <th>End Time</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        <tr th:each="booking : ${bookings}">
+
+                            <td th:text="${booking.bookingId}">1</td>
+
+                            <td th:text="${booking.asset.assetName}">
+                                Laptop 1
+                            </td>
+
+                            <td th:text="${booking.bookingDate}">
+                                2026-10-30
+                            </td>
+
+                            <td th:text="${booking.startTime}">
+                                10:00
+                            </td>
+
+                            <td th:text="${booking.endTime}">
+                                11:00
+                            </td>
+
+                            <td>
+                                <span class="status"
+                                      th:classappend="${booking.status == 'BOOKED'} ? ' status-booked' : (${booking.status == 'CANCELLED'} ? ' status-cancelled' : ' status-other')"
+                                      th:text="${booking.status}">
+                                    BOOKED
+                                </span>
+                            </td>
+
+                            <td>
+                                <form th:if="${booking.status == 'BOOKED'}"
+                                      th:action="@{/booking/cancel}"
+                                      method="post"
+                                      onsubmit="return confirm('Are you sure you want to cancel this booking?');">
+
+                                    <input type="hidden"
+                                           name="bookingId"
+                                           th:value="${booking.bookingId}">
+
+                                    <button type="submit" class="cancel-btn">
+                                        Cancel
+                                    </button>
+                                </form>
+
+                                <span th:if="${booking.status != 'BOOKED'}"
+                                      class="cancelled-text">
+                                    No Action
+                                </span>
+                            </td>
+
+                        </tr>
+
+                        <!-- Empty State -->
+                        <tr th:if="${#lists.isEmpty(bookings)}">
+                            <td colspan="7" class="empty-state">
+                                <span class="icon">📋</span>
+                                <h4>No Bookings Found</h4>
+                                You have no active bookings at the moment.
+                                <br>
+                                Click New Booking to book an asset.
+                            </td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            &copy; 2026 Asset Booking Portal. All rights reserved.
+        </footer>
+
+    </main>
+
+</body>
+</html>

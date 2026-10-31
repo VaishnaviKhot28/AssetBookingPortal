@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projectors | Asset Booking Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: Arial, sans-serif;
+        }
+
+        body {
+            background: #f4f6f9;
+            color: #263238;
+        }
+
+        /* Navigation Bar */
+        .top-nav {
+            background: #172b4d;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .top-nav h2 {
+            font-size: 25px;
+            margin: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #72e6b1;
+        }
+
+        .nav-links a.active {
+            color: #72e6b1;
+            font-weight: bold;
+            border-bottom: 2px solid #72e6b1;
+            padding-bottom: 5px;
+        }
+
+        /* Page Header */
+        .page-header {
+            text-align: center;
+            padding: 35px 15px 20px;
+        }
+
+        .page-header h1 {
+            color: #243b64;
+            margin-bottom: 12px;
+            font-size: 38px;
+        }
+
+        .page-header p {
+            color: #607080;
+            line-height: 1.6;
+            font-size: 17px;
+            margin-bottom: 5px;
+        }
+
+        /* Projector Grid */
+        .projector-container {
+            max-width: 1500px;
+            margin: 20px auto 45px;
+            padding: 0 30px;
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 30px;
+        }
+
+        /* Projector Card */
+        .projector-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .projector-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.13);
+        }
+
+        .projector-card img {
+            display: block;
+            width: 100%;
+            height: 265px;
+            object-fit: contain;
+            padding: 12px;
+            background: #eef2f7;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-content h3 {
+            color: #243b64;
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+
+        .description {
+            color: #607080;
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 48px;
+        }
+
+        /* Rent */
+        .rent {
+            margin: 18px 0;
+            color: #198754;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .rent small {
+            font-size: 13px;
+            font-weight: normal;
+            color: #607080;
+        }
+
+        /* Book Button */
+        .book-btn {
+            display: block;
+            width: 100%;
+            background: #243b64;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 17px;
+            font-weight: bold;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .book-btn:hover {
+            background: #172b4d;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            background: #172b4d;
+            color: white;
+            padding: 22px;
+            font-size: 14px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Tablet */
+        @media (max-width: 1000px) {
+            .projector-container {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .top-nav {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 650px) {
+            .top-nav {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-nav h2 {
+                font-size: 22px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .projector-container {
+                grid-template-columns: 1fr;
+                padding: 0 15px;
+            }
+
+            .page-header h1 {
+                font-size: 29px;
+            }
+
+            .page-header p {
+                font-size: 15px;
+            }
+
+            .projector-card img {
+                height: 230px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="top-nav">
+
+        <h2>Asset Booking Portal</h2>
+
+        <nav class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+            <a th:href="@{/laptops}">Laptops</a>
+            <a th:href="@{/projectors}" class="active">Projectors</a>
+            <a th:href="@{/my-bookings}">My Bookings</a>
+            <a th:href="@{/admin}">Admin Panel</a>
+        </nav>
+
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+
+        <h1>📽️ Projector Booking</h1>
+
+        <p>
+            Choose a projector for your meeting, presentation or training session.
+        </p>
+
+        <p>
+            Check the hourly rent and select a projector to continue.
+        </p>
+
+    </section>
+
+    <!-- Projector Cards -->
+    <main class="projector-container">
+
+        <!-- Projector 1 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector.jpg}" alt="Projector 1">
+
+            <div class="card-content">
+                <h3>Projector 1</h3>
+                <p class="description">
+                    Standard projector for office meetings and presentations.
+                </p>
+                <p class="rent">₹200 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 1')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 2 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-2.jpg}" alt="Projector 2">
+
+            <div class="card-content">
+                <h3>Projector 2</h3>
+                <p class="description">
+                    HD projector suitable for training and classroom sessions.
+                </p>
+                <p class="rent">₹250 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 2')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 3 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-3.jpg}" alt="Projector 3">
+
+            <div class="card-content">
+                <h3>Projector 3</h3>
+                <p class="description">
+                    Bright display projector for conference rooms.
+                </p>
+                <p class="rent">₹300 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 3')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 4 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-4.jpg}" alt="Projector 4">
+
+            <div class="card-content">
+                <h3>Projector 4</h3>
+                <p class="description">
+                    Portable projector for small meetings and demonstrations.
+                </p>
+                <p class="rent">₹180 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 4')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 5 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-5.jpg}" alt="Projector 5">
+
+            <div class="card-content">
+                <h3>Projector 5</h3>
+                <p class="description">
+                    Full HD projector for professional presentations.
+                </p>
+                <p class="rent">₹350 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 5')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 6 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-6.jpg}" alt="Projector 6">
+
+            <div class="card-content">
+                <h3>Projector 6</h3>
+                <p class="description">
+                    Projector for team meetings and presentations.
+                </p>
+                <p class="rent">₹220 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 6')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 7 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-7.jpg}" alt="Projector 7">
+
+            <div class="card-content">
+                <h3>Projector 7</h3>
+                <p class="description">
+                    High-brightness projector for larger meeting spaces.
+                </p>
+                <p class="rent">₹400 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 7')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 8 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-8.jpg}" alt="Projector 8">
+
+            <div class="card-content">
+                <h3>Projector 8</h3>
+                <p class="description">
+                    Compact projector for everyday office use.
+                </p>
+                <p class="rent">₹190 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 8')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 9 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-9.jpg}" alt="Projector 9">
+
+            <div class="card-content">
+                <h3>Projector 9</h3>
+                <p class="description">
+                    HD projector for workshops and training sessions.
+                </p>
+                <p class="rent">₹280 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 9')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 10 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-10.jpg}" alt="Projector 10">
+
+            <div class="card-content">
+                <h3>Projector 10</h3>
+                <p class="description">
+                    Premium projector for conference presentations.
+                </p>
+                <p class="rent">₹450 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 10')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 11 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-11.jpg}" alt="Projector 11">
+
+            <div class="card-content">
+                <h3>Projector 11</h3>
+                <p class="description">
+                    Portable HD projector for flexible office use.
+                </p>
+                <p class="rent">₹230 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 11')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+        <!-- Projector 12 -->
+        <div class="projector-card">
+            <img th:src="@{/images/projector-12.jpg}" alt="Projector 12">
+
+            <div class="card-content">
+                <h3>Projector 12</h3>
+                <p class="description">
+                    High-quality projector for events and presentations.
+                </p>
+                <p class="rent">₹380 <small>/ hour</small></p>
+                <a class="book-btn"
+                   th:href="@{/booking(assetType='Projector',assetName='Projector 12')}">
+                    Book Now
+                </a>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Asset Booking Portal | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

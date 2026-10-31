@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation | Asset Booking Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            color: #263238;
+            min-height: 100vh;
+        }
+
+        /* Navigation Bar */
+        .top-nav {
+            background: #172b4d;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .brand {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #72e6b1;
+        }
+
+        .nav-links a.active {
+            color: #72e6b1;
+            font-weight: bold;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 750px;
+            margin: 35px auto;
+            padding: 0 20px;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2457c5;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Confirmation Card */
+        .card {
+            padding: 35px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.09);
+        }
+
+        .icon {
+            width: 65px;
+            height: 65px;
+            margin: 0 auto 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            background: #dcfce7;
+            color: #15803d;
+            font-size: 35px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #174080;
+            font-size: 29px;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        /* Booking Details */
+        .details {
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .detail-row {
+            display: grid;
+            grid-template-columns: 180px minmax(0, 1fr);
+            gap: 15px;
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-row:last-child {
+            border-bottom: none;
+        }
+
+        .detail-label {
+            font-weight: bold;
+            color: #475569;
+        }
+
+        .detail-value {
+            color: #172554;
+            overflow-wrap: anywhere;
+            line-height: 1.5;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            text-align: center;
+            background: #2864e8;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #1748b0;
+        }
+
+        .cancel {
+            background: #64748b;
+        }
+
+        .cancel:hover {
+            background: #475569;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 45px;
+            padding: 22px;
+            background: #172b4d;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .top-nav {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav {
+                flex-direction: column;
+                align-items: flex-start;
+                padding: 18px;
+            }
+
+            .brand {
+                font-size: 21px;
+            }
+
+            .nav-links {
+                gap: 13px;
+            }
+
+            .nav-links a {
+                font-size: 13px;
+            }
+
+            .container {
+                margin-top: 25px;
+                padding: 0 12px;
+            }
+
+            .card {
+                padding: 22px 17px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .detail-row {
+                grid-template-columns: 1fr;
+                gap: 6px;
+                padding: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="top-nav">
+        <div class="brand">Asset Booking Portal</div>
+
+        <nav class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+            <a th:href="@{/laptops}">Laptops</a>
+            <a th:href="@{/projectors}">Projectors</a>
+            <a th:href="@{/my-bookings}">My Bookings</a>
+            <a th:href="@{/my-account}">My Account</a>
+            <a th:href="@{/admin/assets}">Admin Panel</a>
+        </nav>
+    </header>
+
+    <!-- Booking Confirmation -->
+    <main class="container">
+
+        <a th:href="@{/booking}" class="back-link">
+            &larr; Back to Booking
+        </a>
+
+        <div class="card">
+
+            <div class="icon">✓</div>
+
+            <h1>Review Your Booking</h1>
+
+            <p class="subtitle">
+                Please check your booking details before confirming.
+            </p>
+
+            <!-- Booking Details -->
+            <div class="details">
+
+                <div class="detail-row">
+                    <span class="detail-label">Asset Name</span>
+                    <span class="detail-value"
+                          th:text="${assetName}">Laptop 1</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Asset Type</span>
+                    <span class="detail-value"
+                          th:text="${assetType}">Laptop</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Booking Date</span>
+                    <span class="detail-value"
+                          th:text="${bookingDate}">2026-10-30</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Start Time</span>
+                    <span class="detail-value"
+                          th:text="${startTime}">10:00</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">End Time</span>
+                    <span class="detail-value"
+                          th:text="${endTime}">12:00</span>
+                </div>
+
+                <div class="detail-row">
+                    <span class="detail-label">Purpose</span>
+                    <span class="detail-value"
+                          th:text="${description}">Project work</span>
+                </div>
+
+            </div>
+
+            <!-- Confirm / Cancel -->
+            <div class="button-group">
+
+                <form th:action="@{/booking/save}" method="post">
+
+                    <input type="hidden"
+                           name="assetType"
+                           th:value="${assetType}">
+
+                    <input type="hidden"
+                           name="assetName"
+                           th:value="${assetName}">
+
+                    <input type="hidden"
+                           name="bookingDate"
+                           th:value="${bookingDate}">
+
+                    <input type="hidden"
+                           name="startTime"
+                           th:value="${startTime}">
+
+                    <input type="hidden"
+                           name="endTime"
+                           th:value="${endTime}">
+
+                    <input type="hidden"
+                           name="description"
+                           th:value="${description}">
+
+                    <button type="submit" class="btn">
+                        ✓ Confirm Booking
+                    </button>
+
+                </form>
+
+                <a th:href="@{/booking}" class="btn cancel">
+                    Cancel and Go Back
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Asset Booking Portal | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

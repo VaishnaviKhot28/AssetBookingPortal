@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laptops | Asset Booking Portal</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            color: #263238;
+        }
+
+        /* Navigation Bar */
+        .top-nav {
+            background: #172b4d;
+            color: white;
+            padding: 20px 35px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .top-nav h2 {
+            margin: 0;
+            font-size: 25px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            flex-wrap: wrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: #72e6b1;
+        }
+
+        .nav-links a.active {
+            color: #72e6b1;
+            font-weight: bold;
+            border-bottom: 2px solid #72e6b1;
+            padding-bottom: 5px;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1500px;
+            margin: auto;
+            padding: 30px;
+        }
+
+        /* Page Heading */
+        h1 {
+            margin-top: 20px;
+            color: #243b64;
+            font-size: 40px;
+            text-align: center;
+        }
+
+        .subtitle {
+            color: #607d8b;
+            font-size: 20px;
+            margin-bottom: 40px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Laptop Grid */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 30px;
+        }
+
+        /* Laptop Card */
+        .asset-card {
+            background-color: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .asset-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.13);
+        }
+
+        .asset-card img {
+            display: block;
+            width: 100%;
+            height: 265px;
+            object-fit: cover;
+            background-color: #e9eef5;
+        }
+
+        .card-content {
+            padding: 25px;
+        }
+
+        .card-content h3 {
+            margin: 0 0 15px;
+            color: #243b64;
+            font-size: 25px;
+        }
+
+        .description {
+            min-height: 50px;
+            color: #607d8b;
+            font-size: 16px;
+            line-height: 1.6;
+        }
+
+        /* Rent */
+        .rent {
+            color: #198754;
+            font-size: 21px;
+            font-weight: bold;
+            margin-top: 18px;
+            margin-bottom: 15px;
+        }
+
+        .rent-note {
+            color: #6c757d;
+            font-size: 13px;
+            margin-top: -8px;
+        }
+
+        /* Book Now Button */
+        .book-btn {
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+            padding: 16px;
+            text-align: center;
+            background-color: #243b64;
+            color: white;
+            text-decoration: none;
+            border-radius: 9px;
+            font-size: 18px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .book-btn:hover {
+            background-color: #172b4d;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 40px;
+            padding: 22px;
+            background: #172b4d;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        footer p {
+            margin: 0;
+        }
+
+        /* Tablet */
+        @media (max-width: 1000px) {
+            .asset-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .top-nav {
+                padding: 20px;
+            }
+
+            .nav-links {
+                gap: 16px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 650px) {
+            .container {
+                padding: 15px;
+            }
+
+            .top-nav {
+                padding: 20px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .top-nav h2 {
+                font-size: 22px;
+            }
+
+            .nav-links {
+                gap: 14px;
+            }
+
+            .nav-links a {
+                font-size: 14px;
+            }
+
+            .asset-grid {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 30px;
+            }
+
+            .subtitle {
+                font-size: 16px;
+            }
+
+            .asset-card img {
+                height: 230px;
+            }
+
+            .card-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <header class="top-nav">
+        <h2>Asset Booking Portal</h2>
+
+        <nav class="nav-links">
+            <a th:href="@{/dashboard}">Dashboard</a>
+            <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+            <a th:href="@{/laptops}" class="active">Laptops</a>
+            <a th:href="@{/projectors}">Projectors</a>
+            <a th:href="@{/my-bookings}">My Bookings</a>
+            <a th:href="@{/admin}">Admin Panel</a>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+
+        <h1>💻 Laptops</h1>
+
+        <p class="subtitle">
+            Explore available laptops, check the rental price
+            and book a suitable laptop.
+        </p>
+
+        <div class="asset-grid">
+
+            <!-- Laptop 1 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop.jpg}" alt="Laptop 1">
+
+                <div class="card-content">
+                    <h3>Laptop 1</h3>
+                    <p class="description">
+                        Laptop for programming, coding and development work.
+                    </p>
+                    <p class="rent">Rent: ₹100 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 2 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-2.jpg}" alt="Laptop 2">
+
+                <div class="card-content">
+                    <h3>Laptop 2</h3>
+                    <p class="description">
+                        Laptop suitable for office work and documentation.
+                    </p>
+                    <p class="rent">Rent: ₹80 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 3 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-3.jpg}" alt="Laptop 3">
+
+                <div class="card-content">
+                    <h3>Laptop 3</h3>
+                    <p class="description">
+                        Laptop for software testing and web development.
+                    </p>
+                    <p class="rent">Rent: ₹120 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 4 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-4.jpg}" alt="Laptop 4">
+
+                <div class="card-content">
+                    <h3>Laptop 4</h3>
+                    <p class="description">
+                        Laptop for presentations, meetings and office tasks.
+                    </p>
+                    <p class="rent">Rent: ₹90 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 5 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-5.jpg}" alt="Laptop 5">
+
+                <div class="card-content">
+                    <h3>Laptop 5</h3>
+                    <p class="description">
+                        Laptop for student projects and research work.
+                    </p>
+                    <p class="rent">Rent: ₹75 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 6 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-6.jpg}" alt="Laptop 6">
+
+                <div class="card-content">
+                    <h3>Laptop 6</h3>
+                    <p class="description">
+                        Laptop for programming and database development.
+                    </p>
+                    <p class="rent">Rent: ₹110 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 7 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-7.jpg}" alt="Laptop 7">
+
+                <div class="card-content">
+                    <h3>Laptop 7</h3>
+                    <p class="description">
+                        Laptop for online meetings and collaboration.
+                    </p>
+                    <p class="rent">Rent: ₹85 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 8 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-8.jpg}" alt="Laptop 8">
+
+                <div class="card-content">
+                    <h3>Laptop 8</h3>
+                    <p class="description">
+                        Laptop for business applications and productivity.
+                    </p>
+                    <p class="rent">Rent: ₹95 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 9 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-9.jpg}" alt="Laptop 9">
+
+                <div class="card-content">
+                    <h3>Laptop 9</h3>
+                    <p class="description">
+                        Laptop for testing, debugging and coding tasks.
+                    </p>
+                    <p class="rent">Rent: ₹115 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 10 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-10.jpg}" alt="Laptop 10">
+
+                <div class="card-content">
+                    <h3>Laptop 10</h3>
+                    <p class="description">
+                        Laptop for presentations and professional work.
+                    </p>
+                    <p class="rent">Rent: ₹100 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 11 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-11.jpg}" alt="Laptop 11">
+
+                <div class="card-content">
+                    <h3>Laptop 11</h3>
+                    <p class="description">
+                        Laptop for project work and daily office tasks.
+                    </p>
+                    <p class="rent">Rent: ₹90 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+            <!-- Laptop 12 -->
+            <div class="asset-card">
+                <img th:src="@{/images/laptop-12.jpg}" alt="Laptop 12">
+
+                <div class="card-content">
+                    <h3>Laptop 12</h3>
+                    <p class="description">
+                        Laptop for development, learning and collaboration.
+                    </p>
+                    <p class="rent">Rent: ₹105 / hour</p>
+                    <p class="rent-note">Illustrative price; confirm before booking.</p>
+                    <a th:href="@{/booking(assetType='Laptop')}" class="book-btn">Book Now</a>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>© 2026 Asset Booking Portal | All Rights Reserved</p>
+    </footer>
+
+</body>
+</html>

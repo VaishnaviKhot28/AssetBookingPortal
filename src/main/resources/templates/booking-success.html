@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Booking Successful | Asset Booking Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f1f5f9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Navigation Bar */
+        .navbar {
+            width: 100%;
+            background: #243b64;
+            padding: 15px 4%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+        }
+
+        .logo {
+            color: white;
+            font-size: 22px;
+            font-weight: bold;
+            text-decoration: none;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 11px;
+            border-radius: 6px;
+            font-size: 13px;
+            transition: background 0.3s;
+        }
+
+        .nav-links a:hover {
+            background: #405d91;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .success-container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 480px;
+        }
+
+        .success-icon {
+            width: 80px;
+            height: 80px;
+            background: #22c55e;
+            color: white;
+            border-radius: 50%;
+            font-size: 45px;
+            line-height: 80px;
+            margin: 0 auto 22px;
+            box-shadow: 0 5px 15px rgba(34, 197, 94, 0.25);
+        }
+
+        h1 {
+            color: #16a34a;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+
+        p {
+            color: #555;
+            font-size: 16px;
+            margin-bottom: 25px;
+            line-height: 1.7;
+        }
+
+        .dashboard-btn {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 13px 24px;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: bold;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+        .dashboard-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        .history-btn {
+            display: inline-block;
+            background: #e8eef8;
+            color: #243b64;
+            padding: 13px 24px;
+            text-decoration: none;
+            border-radius: 7px;
+            font-size: 15px;
+            font-weight: bold;
+            margin-top: 12px;
+            transition: background 0.3s;
+        }
+
+        .history-btn:hover {
+            background: #d6e2f5;
+        }
+
+        /* Footer */
+        .footer {
+            background: #243b64;
+            color: white;
+            text-align: center;
+            padding: 16px;
+            font-size: 13px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 900px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .logo {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                gap: 5px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .main-content {
+                padding: 25px 12px;
+            }
+
+            .success-container {
+                padding: 30px 20px;
+                width: 100%;
+            }
+
+            .success-icon {
+                width: 70px;
+                height: 70px;
+                line-height: 70px;
+                font-size: 38px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            p {
+                font-size: 14px;
+            }
+
+            .dashboard-btn,
+            .history-btn {
+                display: block;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+
+        <a href="/dashboard" class="logo">
+            Asset Booking Portal
+        </a>
+
+        <div class="nav-links">
+            <a href="/dashboard">Dashboard</a>
+            <a href="/meeting-rooms">Meeting Rooms</a>
+            <a href="/laptops">Laptops</a>
+            <a href="/projectors">Projectors</a>
+            <a href="/my-bookings">My Bookings</a>
+            <a href="/booking-history">Booking History</a>
+            <a href="/my-account">My Account</a>
+            <a href="/admin/assets">Admin Panel</a>
+        </div>
+
+    </nav>
+
+    <!-- Booking Success Content -->
+    <main class="main-content">
+
+        <div class="success-container">
+
+            <div class="success-icon">&#10003;</div>
+
+            <h1>Booking Successful!</h1>
+
+            <p>
+                Your asset has been booked successfully.
+                Thank you for using the Asset Booking Portal.
+            </p>
+
+            <a href="/my-bookings" class="history-btn">
+                View My Bookings
+            </a>
+
+        </div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        &copy; 2026 Asset Booking Portal. All rights reserved.
+    </footer>
+
+</body>
+
+</html>

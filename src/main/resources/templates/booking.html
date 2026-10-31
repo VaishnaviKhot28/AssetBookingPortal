@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book an Asset | Asset Booking Portal</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #eaf2ff, #f5f7fb);
+            min-height: 100vh;
+            color: #263238;
+        }
+
+        /* Horizontal Navigation Bar */
+        .top-nav {
+            background: #172b4d;
+            color: white;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .brand {
+            font-size: 21px;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+            flex-wrap: nowrap;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-size: 13px;
+            padding: 9px 10px;
+            border-radius: 6px;
+            white-space: nowrap;
+            transition: background 0.2s;
+        }
+
+        .nav-links a:hover {
+            background: #334779;
+            color: #72e6b1;
+        }
+
+        .nav-links a.active {
+            background: #ffffff;
+            color: #172b4d;
+            font-weight: bold;
+        }
+
+        /* Booking Container */
+        .booking-container {
+            width: 100%;
+            max-width: 760px;
+            margin: 35px auto;
+            padding: 0 18px;
+        }
+
+        .booking-card {
+            background: #ffffff;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.10);
+        }
+
+        .booking-card h1 {
+            text-align: center;
+            font-size: 28px;
+            color: #173b80;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #6b7280;
+            font-size: 14px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #263238;
+        }
+
+        input,
+        select,
+        textarea {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 7px;
+            background: #ffffff;
+            color: #263238;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            outline: none;
+        }
+
+        input,
+        select {
+            min-height: 44px;
+        }
+
+        textarea {
+            min-height: 110px;
+            resize: vertical;
+            line-height: 1.5;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: #2457c5;
+            box-shadow: 0 0 0 3px rgba(36, 87, 197, 0.12);
+        }
+
+        input[readonly] {
+            background: #f1f5f9;
+            font-weight: bold;
+        }
+
+        .time-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .hint {
+            display: block;
+            margin-top: 6px;
+            font-size: 12px;
+            color: #64748b;
+            line-height: 1.5;
+        }
+
+        .submit-button {
+            width: 100%;
+            padding: 14px;
+            margin-top: 5px;
+            border: none;
+            border-radius: 8px;
+            background: #2457c5;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .submit-button:hover {
+            background: #173b80;
+        }
+
+        .required-note {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 12px;
+            color: #64748b;
+        }
+
+        footer {
+            margin-top: 45px;
+            padding: 22px;
+            background: #172b4d;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1250px) {
+            .top-nav {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .nav-links {
+                width: 100%;
+                justify-content: flex-start;
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .top-nav {
+                padding: 18px;
+            }
+
+            .brand {
+                font-size: 20px;
+            }
+
+            .nav-links {
+                gap: 6px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            .booking-container {
+                margin-top: 25px;
+                padding: 0 12px;
+            }
+
+            .booking-card {
+                padding: 22px 18px;
+            }
+
+            .booking-card h1 {
+                font-size: 24px;
+            }
+
+            .time-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<!-- Navigation Bar -->
+<header class="top-nav">
+    <div class="brand">Asset Booking Portal</div>
+
+    <nav class="nav-links">
+        <a th:href="@{/dashboard}">Dashboard</a>
+        <a th:href="@{/meeting-rooms}">Meeting Rooms</a>
+        <a th:href="@{/laptops}">Laptops</a>
+        <a th:href="@{/projectors}">Projectors</a>
+        <a th:href="@{/my-bookings}">My Bookings</a>
+        <a th:href="@{/booking-history}">Booking History</a>
+        <a th:href="@{/weekly-calendar}">Weekly Calendar</a>
+        <a th:href="@{/my-account}">My Account</a>
+        <a th:href="@{/admin/assets}">Admin Panel</a>
+    </nav>
+</header>
+
+<!-- Booking Form -->
+<main class="booking-container">
+
+    <div class="booking-card">
+
+        <h1>Book an Asset</h1>
+
+        <p class="subtitle">
+            Select your asset, choose the booking date and time,
+            and enter the purpose of your booking.
+        </p>
+
+        <form th:action="@{/booking/confirm}"
+              action="/booking/confirm"
+              method="get"
+              id="bookingForm">
+
+            <!-- 1. Asset Type -->
+            <div class="form-group">
+                <label for="assetType">1. Asset Type *</label>
+
+                <select id="assetType" name="assetType" required>
+                    <option value="">Select an Asset Type</option>
+                    <option value="Meeting Room">Meeting Room</option>
+                    <option value="Laptop">Laptop</option>
+                    <option value="Projector">Projector</option>
+                </select>
+            </div>
+
+            <!-- 2. Select Asset -->
+            <div class="form-group">
+                <label for="assetName">2. Select Asset *</label>
+
+                <select id="assetName" name="assetName" required>
+                    <option value="">First select Asset Type</option>
+                </select>
+
+                <small class="hint">
+                    Select the room, laptop, or projector you want to book.
+                </small>
+            </div>
+
+            <!-- 3. Booking Date -->
+            <div class="form-group">
+                <label for="bookingDate">3. Booking Date *</label>
+
+                <input type="date"
+                       id="bookingDate"
+                       name="bookingDate"
+                       required>
+
+                <small class="hint">
+                    Select the date on which you need the asset.
+                </small>
+            </div>
+
+            <!-- 4. Start Time and End Time -->
+			<div class="time-row">
+
+			    <div class="form-group">
+			        <label for="startTime">4. Start Time *</label>
+			        <input type="time" id="startTime" name="startTime"
+			               step="1800" required>
+			        <small>Select the time in AM/PM format.</small>
+			    </div>
+
+			    <div class="form-group">
+			        <label for="endTime">End Time *</label>
+			        <input type="time" id="endTime" name="endTime"
+			               step="1800" required>
+			        <small>Select the time in AM/PM format.</small>
+			    </div>
+
+			</div>
+
+            <!-- 5. Rent per Hour -->
+            <div class="form-group">
+                <label for="hourlyRent">5. Rent per Hour</label>
+
+                <input type="text"
+                       id="hourlyRent"
+                       value="₹0/hour"
+                       readonly>
+
+                <small class="hint">
+                    Rent for the selected asset per hour.
+                </small>
+            </div>
+
+            <!-- 6. Booking Duration -->
+            <div class="form-group">
+                <label for="duration">6. Booking Duration</label>
+
+                <input type="text"
+                       id="duration"
+                       value="0 hours"
+                       readonly>
+            </div>
+
+            <!-- 7. Total Estimated Rent -->
+            <div class="form-group">
+                <label for="totalRent">7. Total Estimated Rent</label>
+
+                <input type="text"
+                       id="totalRent"
+                       value="₹0"
+                       readonly>
+
+                
+            </div>
+
+            <!-- 8. Purpose / Description -->
+            <div class="form-group">
+                <label for="description">8. Purpose / Description *</label>
+
+                <textarea id="description"
+                          name="description"
+                          rows="4"
+                          maxlength="500"
+                          placeholder="Enter the purpose of your booking..."
+                          required></textarea>
+
+                <small class="hint">
+                    Example: Team meeting, project presentation, or training session.
+                </small>
+            </div>
+
+            <!-- Submit -->
+            <button type="submit" class="submit-button">
+                Continue Booking
+            </button>
+
+            <p class="required-note">
+                * All fields are required.
+            </p>
+
+        </form>
+    </div>
+</main>
+
+<footer>
+    <p>© 2026 Asset Booking Portal | All Rights Reserved</p>
+</footer>
+
+<script>
+    const bookingDate = document.getElementById("bookingDate");
+    const assetType = document.getElementById("assetType");
+    const assetName = document.getElementById("assetName");
+    const startTime = document.getElementById("startTime");
+    const endTime = document.getElementById("endTime");
+    const hourlyRent = document.getElementById("hourlyRent");
+    const durationField = document.getElementById("duration");
+    const totalRent = document.getElementById("totalRent");
+    const bookingForm = document.getElementById("bookingForm");
+
+    /*
+     * DEMO RATES ONLY.
+     * Replace these sample asset names and rates with your actual
+     * database asset names and approved hourly rates.
+     */
+    const assetPrices = {
+        "Meeting Room": {
+            "Meeting Room 1": 500,
+            "Meeting Room 2": 700,
+            "Meeting Room 3": 600,
+            "Meeting Room 4": 550,
+            "Meeting Room 5": 650,
+            "Meeting Room 6": 750,
+            "Meeting Room 7": 450,
+            "Meeting Room 8": 800,
+            "Meeting Room 9": 600,
+            "Meeting Room 10": 700,
+            "Meeting Room 11": 550,
+            "Meeting Room 12": 900
+        },
+
+        "Laptop": {
+            "Laptop 1": 200,
+            "Laptop 2": 300,
+            "Laptop 3": 250,
+            "Laptop 4": 350,
+            "Laptop 5": 400,
+            "Laptop 6": 280,
+            "Laptop 7": 320,
+            "Laptop 8": 450,
+            "Laptop 9": 230,
+            "Laptop 10": 380,
+            "Laptop 11": 300,
+            "Laptop 12": 500
+        },
+
+        "Projector": {
+            "Projector 1": 150,
+            "Projector 2": 250,
+            "Projector 3": 200,
+            "Projector 4": 300,
+            "Projector 5": 180,
+            "Projector 6": 350,
+            "Projector 7": 220,
+            "Projector 8": 400,
+            "Projector 9": 170,
+            "Projector 10": 280,
+            "Projector 11": 320,
+            "Projector 12": 450
+        }
+    };
+
+    // Set today's date as the minimum booking date.
+    function setMinimumDate() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+
+        bookingDate.min = `${year}-${month}-${day}`;
+    }
+
+    setMinimumDate();
+
+    // Populate asset options based on selected asset type.
+    assetType.addEventListener("change", function () {
+        const selectedType = this.value;
+        const assets = assetPrices[selectedType] || {};
+
+        assetName.innerHTML = '<option value="">Select an Asset</option>';
+
+        Object.keys(assets).forEach(function (name) {
+            const option = document.createElement("option");
+            option.value = name;
+            option.textContent = name;
+            assetName.appendChild(option);
+        });
+
+        calculateRent();
+    });
+
+    // Disable end times that are not after the selected start time.
+    startTime.addEventListener("change", function () {
+        Array.from(endTime.options).forEach(function (option) {
+            if (option.value === "") {
+                option.disabled = false;
+                return;
+            }
+
+            option.disabled =
+                startTime.value !== "" &&
+                option.value <= startTime.value;
+        });
+
+        if (endTime.value && endTime.value <= startTime.value) {
+            endTime.value = "";
+        }
+
+        calculateRent();
+    });
+
+    endTime.addEventListener("change", calculateRent);
+    assetName.addEventListener("change", calculateRent);
+
+    // Calculate the displayed hourly rent, duration, and estimated total.
+    function calculateRent() {
+        const selectedType = assetType.value;
+        const selectedName = assetName.value;
+        const start = startTime.value;
+        const end = endTime.value;
+
+        const price = assetPrices[selectedType]?.[selectedName] ?? 0;
+
+        hourlyRent.value = `₹${price}/hour`;
+
+        if (!start || !end || end <= start || price <= 0) {
+            durationField.value = "0 hours";
+            totalRent.value = "₹0";
+            return;
+        }
+
+        const startParts = start.split(":").map(Number);
+        const endParts = end.split(":").map(Number);
+
+        const startMinutes = startParts[0] * 60 + startParts[1];
+        const endMinutes = endParts[0] * 60 + endParts[1];
+
+        const hours = (endMinutes - startMinutes) / 60;
+        const rent = price * hours;
+
+        durationField.value = `${hours} hour(s)`;
+        totalRent.value = `₹${rent.toFixed(2)}`;
+    }
+
+    // Validate the date and time before continuing.
+    bookingForm.addEventListener("submit", function (event) {
+        if (bookingDate.value < bookingDate.min) {
+            event.preventDefault();
+            alert("Please select today or a future booking date.");
+            return;
+        }
+
+        if (!startTime.value || !endTime.value ||
+            endTime.value <= startTime.value) {
+            event.preventDefault();
+            alert("End time must be later than start time.");
+            return;
+        }
+
+        if (!assetName.value) {
+            event.preventDefault();
+            alert("Please select an asset.");
+        }
+    });
+</script>
+
+</body>
+</html>
