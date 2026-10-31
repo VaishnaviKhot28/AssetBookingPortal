@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.EntityGraph;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
@@ -34,6 +35,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     long countByStatus(String status);
 
     // Find all bookings made by a specific user.
+ // Fetch bookings together with their associated assets.
+    @EntityGraph(attributePaths = {"asset"})
     List<Booking> findByUser_UserId(Long userId);
 
     // Find a specific booking belonging to a specific user.
@@ -42,18 +45,23 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             Long userId
     );
 
-    // Find bookings for a specific user and status.
-    List<Booking> findByUser_UserIdAndStatus(
-            Long userId,
-            String status
-    );
+ // Fetch bookings and their associated assets together.
+ @EntityGraph(attributePaths = {"asset"})
+ List<Booking> findByUser_UserIdAndStatus(
+         Long userId,
+         String status
+ );
 
     // Retrieve all bookings ordered by booking ID.
     List<Booking> findAllByOrderByBookingIdAsc();
 
-    // Find bookings between two dates, ordered by date and start time.
+ // Fetch bookings with their associated assets.
+    @EntityGraph(attributePaths = {"asset"})
     List<Booking> findByBookingDateBetweenOrderByBookingDateAscStartTimeAsc(
             LocalDate startDate,
             LocalDate endDate
     );
+ // Fetch bookings along with their associated assets.
+    @EntityGraph(attributePaths = {"asset"})
+    List<Booking> findAllWithAssetByUser_UserId(Long userId);
 }
