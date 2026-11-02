@@ -310,7 +310,6 @@ public class HomeController {
     
     @GetMapping("/meeting-rooms")
     public String meetingRoomsPage(HttpSession session, Model model) {
-
         String displayName = (String) session.getAttribute("displayName");
 
         if (displayName == null) {
