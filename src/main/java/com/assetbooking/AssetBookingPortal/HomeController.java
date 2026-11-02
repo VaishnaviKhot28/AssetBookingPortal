@@ -27,12 +27,10 @@ public class HomeController {
     @Autowired
     private AssetRepository assetRepository;
 
-    // =========================
-    // LOGIN PAGE
-    // =========================
+ // LOGIN PAGE
     @GetMapping("/")
     public String loginPage() {
-        return "login";
+        return "index";
     }
 
     // =========================
