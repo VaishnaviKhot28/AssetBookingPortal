@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login | Asset Booking Portal</title>
+
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        /* Background */
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        /* Login Card */
+        .login-container {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 35px;
+            background: #ffffff;
+            border-radius: 18px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.20);
+        }
+
+        /* Logo */
+        .logo {
+            width: 70px;
+            height: 70px;
+            margin: 0 auto 18px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 32px;
+        }
+
+        /* Heading */
+        h1 {
+            text-align: center;
+            color: #252b48;
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #777f95;
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+
+        /* Messages */
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 18px;
+            font-size: 14px;
+            text-align: center;
+        }
+
+        .error {
+            color: #b42318;
+            background: #fef3f2;
+        }
+
+        .success {
+            color: #067647;
+            background: #ecfdf3;
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #343b53;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        input {
+            width: 100%;
+            padding: 13px 14px;
+            border: 1px solid #d9deea;
+            border-radius: 9px;
+            outline: none;
+            font-size: 15px;
+            background: #fbfcff;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            border-color: #667eea;
+            background: #ffffff;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 9px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.35);
+        }
+
+        .login-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 25px;
+            color: #858ba0;
+            font-size: 12px;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 30px 22px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="login-container">
+
+        <p class="subtitle">
+            Login to your Asset Booking Portal
+        </p>
+
+        <p class="message error"
+           th:if="${param.error}">
+            Invalid email or password. Please try again.
+        </p>
+
+        <p class="message success"
+           th:if="${param.registered}">
+            Registration successful! Please log in.
+        </p>
+
+        <form th:action="@{/login}" method="post">
+
+            <div class="form-group">
+                <label for="email">Email Address</label>
+
+                <input
+                    type="email"
+                    id="email"
+                    name="email"
+                    placeholder="Enter your email"
+                    autocomplete="username"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+
+                <input
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="Enter your password"
+                    autocomplete="current-password"
+                    required>
+            </div>
+
+            <button type="submit" class="login-btn">
+                Login to Dashboard →
+            </button>
+
+        </form>
+
+        <div class="footer">
+            © 2026 Asset Booking Portal. All rights reserved.
+        </div>
+
+    </div>
+
+</body>
+</html>
