@@ -51,6 +51,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
          Long userId,
          String status
  );
+ 
+//Fetch all bookings together with their associated assets for reports.
+@EntityGraph(attributePaths = {"asset"})
+List<Booking> findAllByOrderByBookingDateAscStartTimeAsc();
 
     // Retrieve all bookings ordered by booking ID.
     List<Booking> findAllByOrderByBookingIdAsc();
@@ -64,4 +68,8 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
  // Fetch bookings along with their associated assets.
     @EntityGraph(attributePaths = {"asset"})
     List<Booking> findAllWithAssetByUser_UserId(Long userId);
+
+ // Fetch all bookings with their assets, newest booking first.
+ @EntityGraph(attributePaths = {"asset"})
+ List<Booking> findAllByOrderByBookingIdDesc();
 }

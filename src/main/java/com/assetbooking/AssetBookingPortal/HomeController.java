@@ -49,20 +49,22 @@ public class HomeController {
     @GetMapping("/dashboard")
     public String dashboardPage(HttpSession session, Model model) {
 
-        String displayName =
-                (String) session.getAttribute("displayName");
+        String displayName = (String) session.getAttribute("displayName");
 
         if (displayName == null) {
             return "redirect:/";
         }
 
         long totalAssets = assetRepository.count();
+        long availableAssets = assetRepository.countByStatus("AVAILABLE");
+        long activeBookings = bookingRepository.countByStatus("BOOKED");
 
-        long availableAssets =
-                assetRepository.countByStatus("AVAILABLE");
-
-        long activeBookings =
-                bookingRepository.countByStatus("BOOKED");
+        // Debugging
+        System.out.println("========== DASHBOARD DEBUG ==========");
+        System.out.println("Total Assets: " + totalAssets);
+        System.out.println("Available Assets: " + availableAssets);
+        System.out.println("Active Bookings: " + activeBookings);
+        System.out.println("======================================");
 
         model.addAttribute("displayName", displayName);
         model.addAttribute("totalAssets", totalAssets);
@@ -628,51 +630,50 @@ public String deleteAsset(
     return "redirect:/admin/assets";
 }
 
+//=========================
 //REPORTS
-
+//=========================
 @GetMapping("/reports")
 public String reports(HttpSession session, Model model) {
 
-    String email = (String) session.getAttribute("userEmail");
+ String email = (String) session.getAttribute("userEmail");
 
-    if (email == null) {
-        return "redirect:/";
-    }
+ if (email == null) {
+     return "redirect:/";
+ }
 
-    User user = userRepository.findByEmail(email).orElse(null);
+ User user = userRepository.findByEmail(email).orElse(null);
 
-    if (user == null) {
-        session.invalidate();
-        return "redirect:/";
-    }
+ if (user == null) {
+     session.invalidate();
+     return "redirect:/";
+ }
 
-    model.addAttribute("displayName", user.getName());
+ model.addAttribute("displayName", user.getName());
 
-    model.addAttribute("totalAssets", assetRepository.count());
+ model.addAttribute("totalAssets", assetRepository.count());
 
-    model.addAttribute(
-        "availableAssets",
-        assetRepository.countByStatus("AVAILABLE")
-    );
+ model.addAttribute(
+     "availableAssets",
+     assetRepository.countByStatus("AVAILABLE")
+ );
 
-    model.addAttribute("totalBookings", bookingRepository.count());
+ model.addAttribute("totalBookings", bookingRepository.count());
 
-    model.addAttribute(
-        "activeBookings",
-        bookingRepository.countByStatus("BOOKED")
-    );
+ model.addAttribute(
+     "activeBookings",
+     bookingRepository.countByStatus("BOOKED")
+ );
 
-    model.addAttribute("assets", assetRepository.findAll());
+ model.addAttribute("assets", assetRepository.findAll());
 
-    model.addAttribute(
-        "recentBookings",
-        bookingRepository.findAll(
-            org.springframework.data.domain.Sort
-                .by(org.springframework.data.domain.Sort.Direction.DESC, "bookingId")
-        )
-    );
+ // Fetch recent bookings together with their assets.
+ List<Booking> recentBookings =
+         bookingRepository.findAllByOrderByBookingIdDesc();
 
-    return "reports";
+ model.addAttribute("recentBookings", recentBookings);
+
+ return "reports";
 }
 
 //=========================
