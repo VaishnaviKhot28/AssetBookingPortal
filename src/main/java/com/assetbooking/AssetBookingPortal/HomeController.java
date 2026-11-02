@@ -32,18 +32,40 @@ public class HomeController {
     public String loginPage() {
         return "index";
     }
-    // =========================
-    // DASHBOARD
-    // =========================
-    @GetMapping("/dashboard")
-    public String dashboardPage(HttpSession session, Model model) {
-        String displayName = (String) session.getAttribute("displayName");
+ // =========================
+ // DASHBOARD
+ // =========================
+ @GetMapping("/dashboard")
+ public String dashboardPage(HttpSession session, Model model) {
 
-        if (displayName == null) {
-            return "redirect:/";
-        }
-        return "dashboard";
-    }
+     String displayName = (String) session.getAttribute("displayName");
+
+     if (displayName == null) {
+         return "redirect:/";
+     }
+
+     // Display logged-in user's name
+     model.addAttribute("displayName", displayName);
+
+     // Fetch dashboard counts from database
+     long totalAssets = assetRepository.count();
+     long availableAssets = assetRepository.countByStatus("AVAILABLE");
+     long activeBookings = bookingRepository.countByStatus("BOOKED");
+
+     // Pass counts to dashboard.html
+     model.addAttribute("totalAssets", totalAssets);
+     model.addAttribute("availableAssets", availableAssets);
+     model.addAttribute("activeBookings", activeBookings);
+
+     // Debug information
+     System.out.println("===== DASHBOARD COUNTS =====");
+     System.out.println("Total Assets: " + totalAssets);
+     System.out.println("Available Assets: " + availableAssets);
+     System.out.println("Active Bookings: " + activeBookings);
+     System.out.println("============================");
+
+     return "dashboard";
+ }
 
     // =========================
     // ALL ASSETS PAGE
