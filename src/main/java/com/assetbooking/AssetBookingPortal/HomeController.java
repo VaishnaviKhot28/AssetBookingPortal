@@ -27,12 +27,6 @@ public class HomeController {
     @Autowired
     private AssetRepository assetRepository;
 
- // LOGIN PAGE
-    @GetMapping("/")
-    public String loginPage() {
-        return "index";
-    }
-
     // =========================
     // REGISTER PAGE
     // =========================
@@ -40,37 +34,29 @@ public class HomeController {
     public String registerPage() {
         return "register";
     }
+    
+    
+ // LOGIN PAGE
+    @GetMapping("/")
+    public String loginPage() {
+        return "index";
+    }
 
     // =========================
     // DASHBOARD
     // =========================
     @GetMapping("/dashboard")
     public String dashboardPage(HttpSession session, Model model) {
-
         String displayName = (String) session.getAttribute("displayName");
 
         if (displayName == null) {
             return "redirect:/";
         }
 
-        long totalAssets = assetRepository.count();
-        long availableAssets = assetRepository.countByStatus("AVAILABLE");
-        long activeBookings = bookingRepository.countByStatus("BOOKED");
-
-        // Debugging
-        System.out.println("========== DASHBOARD DEBUG ==========");
-        System.out.println("Total Assets: " + totalAssets);
-        System.out.println("Available Assets: " + availableAssets);
-        System.out.println("Active Bookings: " + activeBookings);
-        System.out.println("======================================");
-
-        model.addAttribute("displayName", displayName);
-        model.addAttribute("totalAssets", totalAssets);
-        model.addAttribute("availableAssets", availableAssets);
-        model.addAttribute("activeBookings", activeBookings);
+        // तुमचा सध्याचा Dashboard code इथे ठेवा.
 
         return "dashboard";
-     }
+    }
 
     // =========================
     // ALL ASSETS PAGE
@@ -307,16 +293,27 @@ public class HomeController {
     }
     
     //MEETING ROOMS 
-    
     @GetMapping("/meeting-rooms")
     public String meetingRoomsPage(HttpSession session, Model model) {
-        String displayName = (String) session.getAttribute("displayName");
+
+        System.out.println("========== MEETING ROOMS DEBUG ==========");
+        System.out.println("Requested URL: /meeting-rooms");
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("Display Name: " + session.getAttribute("displayName"));
+        System.out.println("User Email: " + session.getAttribute("userEmail"));
+
+        String displayName =
+                (String) session.getAttribute("displayName");
 
         if (displayName == null) {
+            System.out.println("No session. Redirecting to login.");
             return "redirect:/";
         }
 
         model.addAttribute("displayName", displayName);
+
+        System.out.println("Returning meeting-rooms template");
+        System.out.println("=========================================");
 
         return "meeting-rooms";
     }
