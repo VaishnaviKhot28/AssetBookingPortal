@@ -69,8 +69,8 @@ public class HomeController {
         model.addAttribute("availableAssets", availableAssets);
         model.addAttribute("activeBookings", activeBookings);
 
-        return "index";
-    }
+        return "dashboard";
+     }
 
     // =========================
     // ALL ASSETS PAGE
@@ -351,6 +351,7 @@ public class HomeController {
         model.addAttribute("displayName", displayName);
         return "projector";
     }
+    
     // =========================
     // BOOKING SUCCESS PAGE
     // =========================
