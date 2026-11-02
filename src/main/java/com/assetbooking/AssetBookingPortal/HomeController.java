@@ -25,23 +25,13 @@ public class HomeController {
     private BookingRepository bookingRepository;
 
     @Autowired
-    private AssetRepository assetRepository;
-
-    // =========================
-    // REGISTER PAGE
-    // =========================
-    @GetMapping("/register")
-    public String registerPage() {
-        return "register";
-    }
-    
+    private AssetRepository assetRepository;    
     
  // LOGIN PAGE
     @GetMapping("/")
     public String loginPage() {
         return "index";
     }
-
     // =========================
     // DASHBOARD
     // =========================
@@ -52,9 +42,6 @@ public class HomeController {
         if (displayName == null) {
             return "redirect:/";
         }
-
-        // तुमचा सध्याचा Dashboard code इथे ठेवा.
-
         return "dashboard";
     }
 
