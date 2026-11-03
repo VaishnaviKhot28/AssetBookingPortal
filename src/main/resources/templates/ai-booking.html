@@ -1,559 +1,731 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Asset Booking</title>
 
-    <title>AI Asset Booking | Asset Booking Portal</title>
+<style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+body {
+    background: #f4f7fb;
+    color: #333;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f1f5f9;
-            color: #1e293b;
-        }
+.navbar {
+    background: #1e3a5f;
+    color: white;
+    padding: 18px 35px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
 
-        /* Navigation Bar */
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #1e293b;
-            color: white;
-            padding: 16px 30px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
-        }
+.navbar h2 {
+    font-size: 22px;
+}
 
-        .nav-brand {
-            font-size: 21px;
-            font-weight: bold;
-        }
+.navbar a {
+    color: white;
+    text-decoration: none;
+    margin-left: 20px;
+    font-size: 15px;
+}
 
-        .nav-links {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
+.container {
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 25px;
+}
 
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            padding: 10px 14px;
-            border-radius: 6px;
-            transition: background 0.2s;
-        }
+.card {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
 
-        .nav-links a:hover,
-        .nav-links a.active {
-            background: #3b82f6;
-        }
+h1 {
+    color: #1e3a5f;
+    margin-bottom: 12px;
+}
 
-        /* Main Container */
-        .container {
-            max-width: 750px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
+.subtitle {
+    color: #666;
+    margin-bottom: 25px;
+    line-height: 1.6;
+}
 
-        .booking-card {
-            background: white;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-        }
+label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
 
-        h1 {
-            margin-top: 0;
-            margin-bottom: 10px;
-            font-size: 28px;
-            color: #1e293b;
-        }
+textarea {
+    width: 100%;
+    min-height: 110px;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 15px;
+    resize: vertical;
+    outline: none;
+}
 
-        .subtitle {
-            color: #64748b;
-            line-height: 1.6;
-            margin-bottom: 25px;
-        }
+textarea:focus {
+    border-color: #2563eb;
+}
 
-        label {
-            display: block;
-            margin: 18px 0 8px;
-            font-weight: bold;
-        }
+.examples-box {
+    margin-top: 15px;
+    padding: 16px;
+    background: #f8fafc;
+    border: 1px solid #dbe3ee;
+    border-radius: 8px;
+}
 
-        input,
-        textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #cbd5e1;
-            border-radius: 7px;
-            font-size: 15px;
-            font-family: inherit;
-        }
+.examples-box h3 {
+    color: #1e3a5f;
+    margin-bottom: 8px;
+    font-size: 17px;
+}
 
-        input:focus,
-        textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
-        }
+.examples-box p {
+    color: #666;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
 
-        textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
+.example-btn {
+    display: block;
+    width: 100%;
+    text-align: left;
+    background: white;
+    color: #334155;
+    border: 1px solid #d1d5db;
+    padding: 10px 12px;
+    margin: 8px 0;
+    font-size: 14px;
+    font-weight: normal;
+}
 
-        .hint {
-            color: #64748b;
-            font-size: 13px;
-            margin-top: 7px;
-            line-height: 1.5;
-        }
+.example-btn:hover {
+    background: #eff6ff;
+    border-color: #2563eb;
+}
 
-        button {
-            border: none;
-            border-radius: 7px;
-            padding: 12px 18px;
-            font-size: 15px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
+button {
+    border: none;
+    border-radius: 7px;
+    padding: 12px 20px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: 0.2s;
+}
 
-        .primary-button {
-            width: 100%;
-            margin-top: 22px;
-            background: #2563eb;
-            color: white;
-        }
+.check-btn {
+    background: #2563eb;
+    color: white;
+    margin-top: 15px;
+}
 
-        .primary-button:hover {
-            background: #1d4ed8;
-        }
+.check-btn:hover {
+    background: #1d4ed8;
+}
 
-        button:disabled {
-            background: #94a3b8;
-            cursor: not-allowed;
-        }
+button:disabled {
+    background: #999;
+    cursor: not-allowed;
+}
 
-        /* Result Box */
-        .result-box {
-            margin-top: 24px;
-            padding: 18px;
-            border-radius: 8px;
-            line-height: 1.7;
-            overflow-wrap: anywhere;
-        }
+.message {
+    display: none;
+    margin-top: 20px;
+    padding: 13px;
+    border-radius: 7px;
+    line-height: 1.5;
+}
 
-        .success {
-            background: #dcfce7;
-            border: 1px solid #86efac;
-            color: #166534;
-        }
+.success {
+    display: block;
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
 
-        .error {
-            background: #fee2e2;
-            border: 1px solid #fca5a5;
-            color: #991b1b;
-        }
+.error {
+    display: block;
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
+}
 
-        .info {
-            background: #eff6ff;
-            border: 1px solid #bfdbfe;
-            color: #1e40af;
-        }
+.info {
+    display: block;
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
 
-        .result-box h3 {
-            margin-top: 0;
-        }
+.section {
+    margin-top: 25px;
+    display: none;
+}
 
-        .result-box p {
-            margin: 6px 0;
-        }
+.section h2 {
+    color: #1e3a5f;
+    margin-bottom: 15px;
+    font-size: 21px;
+}
 
-        /* Suggested Available Slot */
-        .suggestion-box {
-            margin-top: 20px;
-            padding: 18px;
-            border: 1px solid #93c5fd;
-            border-radius: 8px;
-            background: #eff6ff;
-        }
+.asset-card {
+    border: 1px solid #ddd;
+    border-radius: 9px;
+    padding: 18px;
+    margin-bottom: 15px;
+    background: #fff;
+}
 
-        .suggestion-box h3 {
-            margin-top: 0;
-            color: #1d4ed8;
-        }
+.asset-card h3 {
+    color: #1e3a5f;
+    margin-bottom: 10px;
+}
 
-        .suggestion-box p {
-            line-height: 1.6;
-        }
+.asset-card p {
+    margin: 7px 0;
+    color: #555;
+}
 
-        .suggested-button {
-            background: #16a34a;
-            color: white;
-            margin-top: 8px;
-        }
+.book-btn {
+    background: #16a34a;
+    color: white;
+    margin-top: 12px;
+}
 
-        .suggested-button:hover {
-            background: #15803d;
-        }
+.book-btn:hover {
+    background: #15803d;
+}
 
-        .footer {
-            text-align: center;
-            color: #64748b;
-            font-size: 13px;
-            padding: 20px;
-        }
+.suggestion-box {
+    margin-top: 20px;
+    padding: 20px;
+    background: #fff7ed;
+    border: 1px solid #fdba74;
+    border-radius: 9px;
+}
 
-        /* Responsive Design */
-        @media (max-width: 600px) {
-            .navbar {
-                flex-direction: column;
-                gap: 14px;
-                padding: 15px;
-            }
+.suggestion-box h3 {
+    color: #9a3412;
+    margin-bottom: 10px;
+}
 
-            .nav-links {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
+.suggestion-box p {
+    margin: 8px 0;
+}
 
-            .container {
-                margin: 22px auto;
-                padding: 0 12px;
-            }
+.suggestion-btn {
+    background: #ea580c;
+    color: white;
+    margin-top: 12px;
+}
 
-            .booking-card {
-                padding: 20px;
-            }
+.suggestion-btn:hover {
+    background: #c2410c;
+}
 
-            h1 {
-                font-size: 24px;
-            }
-        }
-    </style>
+.booking-details {
+    margin-top: 20px;
+    padding: 20px;
+    background: #dcfce7;
+    border: 1px solid #86efac;
+    border-radius: 9px;
+    display: none;
+}
+
+.booking-details h2 {
+    color: #166534;
+    margin-bottom: 12px;
+}
+
+.booking-details p {
+    margin: 8px 0;
+}
+
+.loading {
+    color: #2563eb;
+    margin-top: 15px;
+    display: none;
+    font-weight: bold;
+}
+
+.note {
+    margin-top: 20px;
+    color: #777;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+@media (max-width: 600px) {
+    .navbar {
+        padding: 15px;
+        flex-direction: column;
+        gap: 12px;
+    }
+
+    .container {
+        margin: 20px auto;
+        padding: 12px;
+    }
+
+    .card {
+        padding: 20px;
+    }
+}
+</style>
 </head>
 
 <body>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar">
-        <div class="nav-brand">Asset Booking Portal</div>
+<!-- Navbar -->
+<div class="navbar">
+    <h2>Asset Booking Portal</h2>
 
-        <div class="nav-links">
-            <a href="/dashboard">Dashboard</a>
-            <a href="/ai-booking" class="active">AI Booking</a>
+    <div>
+        <a href="/dashboard">Dashboard</a>
+        <a href="/logout">Logout</a>
+    </div>
+</div>
 
-        </div>
-    </nav>
+<!-- Main Container -->
+<div class="container">
+    <div class="card">
 
-    <!-- Main Content -->
-    <main class="container">
+        <h1>AI Asset Booking</h1>
 
-        <section class="booking-card">
+        <p class="subtitle">
+            Enter your booking request in natural language.
+            AI will check available meeting rooms, laptops and projectors.
+        </p>
 
-            <h1>✦ AI Asset Booking</h1>
+        <label for="bookingPrompt">Enter Your Booking Request</label>
 
-            <p class="subtitle">
-                Book meeting rooms, laptops, and projectors using a
-                natural-language request.
-            </p>
+        <textarea
+            id="bookingPrompt"
+            placeholder="Enter your booking request here..."
+            rows="5"></textarea>
 
+        <!-- Booking Request Examples -->
+        <div class="examples-box">
+            <h3>Booking Request Examples</h3>
+            <p>Click any example to fill the booking request box:</p>
 
-            <!-- Booking Prompt -->
-            <label for="prompt">Describe Your Booking</label>
-
-            <textarea
-                id="prompt"
-                placeholder="Example: Book a projector tomorrow from 10 AM to 11 AM."
-                required
-            ></textarea>
-
-            <p class="hint">
-                Example: Book a meeting room tomorrow from 2 PM to 3 PM.
-                Use a clear asset type, date, start time, and end time.
-            </p>
-
-            <!-- Create Booking Button -->
-            <button
-                type="button"
-                id="submitButton"
-                class="primary-button"
-                onclick="createBookingFromForm()"
-            >
-                Create AI Booking
+            <button type="button" class="example-btn"
+                onclick="fillExample('Book a meeting room on 5 November 2026 from 2 PM to 3 PM.')">
+                Book a meeting room on 5 November 2026 from 2 PM to 3 PM.
             </button>
 
-            <!-- Booking Result -->
-            <div
-                id="result"
-                class="result-box"
-                role="status"
-                aria-live="polite"
-                hidden
-            ></div>
+            <button type="button" class="example-btn"
+                onclick="fillExample('Book a laptop on 6 November 2026 from 10 AM to 12 PM.')">
+                Book a laptop on 6 November 2026 from 10 AM to 12 PM.
+            </button>
 
-            <!-- Suggested Slot -->
-            <div
-                id="suggestionBox"
-                class="suggestion-box"
-                hidden
-            >
+            <button type="button" class="example-btn"
+                onclick="fillExample('Book a projector on 7 November 2026 from 3 PM to 5 PM.')">
+                Book a projector on 7 November 2026 from 3 PM to 5 PM.
+            </button>
+
+            <button type="button" class="example-btn"
+                onclick="fillExample('Book a meeting room on 8 November 2026 from 11 AM to 12 PM.')">
+                Book a meeting room on 8 November 2026 from 11 AM to 12 PM.
+            </button>
+        </div>
+
+        <button
+            type="button"
+            class="check-btn"
+            id="checkAvailabilityBtn"
+            onclick="checkAvailability()">
+            Check Availability
+        </button>
+
+        <div id="loadingMessage" class="loading">
+            Please wait... Checking asset availability.
+        </div>
+
+        <div id="messageBox" class="message"></div>
+
+        <!-- Available Assets -->
+        <div id="availableAssetsBox" class="section">
+            <h2>Available Assets</h2>
+
+            <p style="margin-bottom: 15px; color: #555;">
+                Select an asset and click Book Now to confirm your booking.
+            </p>
+
+            <div id="availableAssetsList"></div>
+        </div>
+
+        <!-- Suggested Slot -->
+        <div id="suggestionBox" class="section">
+            <div class="suggestion-box">
                 <h3>Suggested Available Slot</h3>
 
-                <p id="suggestionText"></p>
+                <p id="suggestionDetails"></p>
 
                 <button
                     type="button"
-                    id="suggestedButton"
-                    class="suggested-button"
-                    onclick="bookSuggestedSlot()"
-                >
-                    Book Suggested Slot
+                    class="suggestion-btn"
+                    id="checkSuggestedSlotBtn"
+                    onclick="checkSuggestedSlot()">
+                    Check Suggested Slot
                 </button>
             </div>
+        </div>
 
-        </section>
-    </main>
+        <!-- Booking Confirmation -->
+        <div id="bookingDetails" class="booking-details">
+            <h2>Booking Successful!</h2>
 
-    <footer class="footer">
-        Asset Booking Portal | AI-Powered Booking
-    </footer>
+            <p><strong>Booking ID:</strong>
+                <span id="bookingId"></span>
+            </p>
 
-    <script>
-        let originalPrompt = "";
-        let suggestedStartTime = "";
-        let suggestedEndTime = "";
+            <p><strong>Asset:</strong>
+                <span id="bookedAsset"></span>
+            </p>
 
-        /**
-         * Read the form and create the booking.
-         */
-        function createBookingFromForm() {
-            const prompt = document.getElementById("prompt").value.trim();
-            const userId = document.getElementById("userId").value.trim();
+            <p><strong>Date:</strong>
+                <span id="bookedDate"></span>
+            </p>
 
-            if (!prompt) {
-                showMessage("Please enter your booking request.", "error");
-                return;
-            }
+            <p><strong>Time:</strong>
+                <span id="bookedTime"></span>
+            </p>
 
-            if (!userId || Number(userId) <= 0) {
-                showMessage("Please enter a valid User ID.", "error");
-                return;
-            }
+            <p><strong>Total Rent:</strong>
+                ₹<span id="bookedRent"></span>
+            </p>
 
-            originalPrompt = prompt;
-            createBooking(prompt, userId);
+            <p><strong>Status:</strong>
+                <span id="bookedStatus"></span>
+            </p>
+        </div>
+
+        <p class="note">
+            Note: Checking availability will not create a booking.
+            Your booking will be saved only after clicking the Book Now button.
+        </p>
+
+    </div>
+</div>
+
+<script>
+
+let currentAvailability = null;
+let suggestedBooking = null;
+
+
+// Fill the booking request box with a selected example
+function fillExample(exampleText) {
+    document.getElementById("bookingPrompt").value = exampleText;
+    document.getElementById("bookingPrompt").focus();
+}
+
+
+// Show message
+function showMessage(message, type) {
+    const messageBox = document.getElementById("messageBox");
+    messageBox.className = "message " + type;
+    messageBox.textContent = message;
+}
+
+
+// Hide all results
+function clearPreviousResults() {
+    document.getElementById("availableAssetsBox").style.display = "none";
+    document.getElementById("suggestionBox").style.display = "none";
+    document.getElementById("bookingDetails").style.display = "none";
+    document.getElementById("availableAssetsList").innerHTML = "";
+    document.getElementById("suggestionDetails").textContent = "";
+
+    currentAvailability = null;
+    suggestedBooking = null;
+}
+
+
+// Check Availability
+async function checkAvailability() {
+
+    const prompt = document.getElementById("bookingPrompt").value.trim();
+    const checkButton = document.getElementById("checkAvailabilityBtn");
+    const loadingMessage = document.getElementById("loadingMessage");
+
+    if (!prompt) {
+        showMessage("Please enter your booking request.", "error");
+        return;
+    }
+
+    clearPreviousResults();
+
+    document.getElementById("messageBox").className = "message";
+
+    checkButton.disabled = true;
+    loadingMessage.style.display = "block";
+
+    try {
+
+        const response = await fetch("/ai-booking/check", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                prompt: prompt
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || data.error) {
+            throw new Error(data.error || "Unable to check availability.");
         }
 
-        /**
-         * Send a booking request to the Spring Boot backend.
-         */
-        async function createBooking(prompt, userId) {
-            const submitButton = document.getElementById("submitButton");
-            const result = document.getElementById("result");
-            const suggestionBox = document.getElementById("suggestionBox");
+        currentAvailability = data;
 
-            result.hidden = true;
-            suggestionBox.hidden = true;
+        // If assets are available
+        if (data.assets && data.assets.length > 0) {
 
-            submitButton.disabled = true;
-            submitButton.textContent = "Processing Booking...";
-
-            showMessage("Processing your booking request. Please wait.", "info");
-
-            try {
-                const response = await fetch("/ai-booking/create", {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    body: JSON.stringify({
-                        prompt: prompt,
-                        userId: userId
-                    })
-                });
-
-                const data = await response.json();
-
-                if (!response.ok) {
-                    const errorMessage =
-                        data.error || "Booking could not be created.";
-
-                    showMessage(errorMessage, "error");
-
-                    /*
-                     * Read the suggested slot from the backend error.
-                     * Expected format:
-                     * Suggested available slot: 11:00 - 12:00
-                     */
-                    const match = errorMessage.match(
-                        /Suggested available slot:\s*(\d{1,2}:\d{2})\s*-\s*(\d{1,2}:\d{2})/i
-                    );
-
-                    if (match) {
-                        suggestedStartTime = match[1];
-                        suggestedEndTime = match[2];
-
-                        document.getElementById("suggestionText").textContent =
-                            "The requested time is unavailable. You can try " +
-                            suggestedStartTime + " - " + suggestedEndTime + ".";
-
-                        suggestionBox.hidden = false;
-                    }
-
-                    return;
-                }
-
-                showBookingSuccess(data);
-
-            } catch (error) {
-                console.error("Booking request failed:", error);
-
-                showMessage(
-                    "Unable to connect to the server. Check that the application is running and try again.",
-                    "error"
-                );
-
-            } finally {
-                submitButton.disabled = false;
-                submitButton.textContent = "Create AI Booking";
-            }
-        }
-
-        /**
-         * Try the suggested time by updating the original prompt.
-         *
-         * This uses natural-language parsing again, so verify the result
-         * returned by the backend before relying on the booking.
-         */
-        function bookSuggestedSlot() {
-            if (!suggestedStartTime || !suggestedEndTime) {
-                showMessage("No suggested time is available.", "error");
-                return;
-            }
-
-            const userId = document.getElementById("userId").value.trim();
-
-            const updatedPrompt = replaceRequestedTime(
-                originalPrompt,
-                suggestedStartTime,
-                suggestedEndTime
+            showMessage(
+                "Available assets found! Select an asset to continue.",
+                "success"
             );
 
-            if (updatedPrompt === originalPrompt) {
-                showMessage(
-                    "Could not identify the original time range. Please update the time in your request manually to " +
-                    suggestedStartTime + " - " + suggestedEndTime + ".",
-                    "error"
-                );
-                return;
-            }
-
-            document.getElementById("prompt").value = updatedPrompt;
-
-            originalPrompt = updatedPrompt;
-
-            createBooking(updatedPrompt, userId);
+            displayAvailableAssets(data);
         }
 
-        /**
-         * Replace a time range such as "from 10 AM to 11 AM"
-         * with a suggested time range.
-         */
-        function replaceRequestedTime(prompt, startTime, endTime) {
-            const timePattern =
-                /(?:from\s+)?\d{1,2}(?::\d{2})?\s*(?:AM|PM)\s*(?:to|-)\s*\d{1,2}(?::\d{2})?\s*(?:AM|PM)/i;
+        // If no asset is available
+        else if (data.suggestedStartTime && data.suggestedEndTime) {
 
-            if (!timePattern.test(prompt)) {
-                return prompt;
-            }
+            showMessage(
+                "All assets are booked for your requested time. A new slot is suggested below.",
+                "info"
+            );
 
-            return prompt.replace(
-                timePattern,
-                "from " + to12Hour(startTime) + " to " + to12Hour(endTime)
+            displaySuggestedSlot(data);
+        }
+
+        else {
+            showMessage(
+                data.message || "No available asset found.",
+                "error"
             );
         }
 
-        /**
-         * Convert 24-hour HH:mm to 12-hour time.
-         */
-        function to12Hour(time) {
-            const parts = time.split(":");
-            let hours = Number(parts[0]);
-            const minutes = parts[1];
+    } catch (error) {
 
-            const suffix = hours >= 12 ? "PM" : "AM";
+        showMessage(error.message, "error");
 
-            hours = hours % 12;
-            if (hours === 0) {
-                hours = 12;
-            }
+    } finally {
 
-            return hours + ":" + minutes + " " + suffix;
+        checkButton.disabled = false;
+        loadingMessage.style.display = "none";
+
+    }
+}
+
+
+// Display Available Assets
+function displayAvailableAssets(data) {
+
+    const box = document.getElementById("availableAssetsBox");
+    const list = document.getElementById("availableAssetsList");
+
+    list.innerHTML = "";
+
+    data.assets.forEach(asset => {
+
+        const assetCard = document.createElement("div");
+        assetCard.className = "asset-card";
+
+        const title = document.createElement("h3");
+        title.textContent = asset.assetName;
+
+        const type = document.createElement("p");
+        type.textContent = "Asset Type: " + asset.assetType;
+
+        const rent = document.createElement("p");
+        rent.textContent = "Hourly Rent: ₹" + asset.hourlyRent;
+
+        const date = document.createElement("p");
+        date.textContent = "Date: " + data.bookingDate;
+
+        const time = document.createElement("p");
+        time.textContent = "Time: " + data.startTime + " - " + data.endTime;
+
+        const bookButton = document.createElement("button");
+        bookButton.type = "button";
+        bookButton.className = "book-btn";
+        bookButton.textContent = "Book Now";
+
+        bookButton.addEventListener("click", function() {
+            confirmBooking(asset, data, bookButton);
+        });
+
+        assetCard.appendChild(title);
+        assetCard.appendChild(type);
+        assetCard.appendChild(rent);
+        assetCard.appendChild(date);
+        assetCard.appendChild(time);
+        assetCard.appendChild(bookButton);
+
+        list.appendChild(assetCard);
+    });
+
+    box.style.display = "block";
+}
+
+
+// Confirm Booking
+async function confirmBooking(asset, data, bookButton) {
+
+    const confirmation = confirm(
+        "Are you sure you want to book " +
+        asset.assetName +
+        " on " +
+        data.bookingDate +
+        " from " +
+        data.startTime +
+        " to " +
+        data.endTime +
+        "?"
+    );
+
+    if (!confirmation) {
+        return;
+    }
+
+    bookButton.disabled = true;
+    bookButton.textContent = "Booking...";
+
+    try {
+
+        const response = await fetch("/ai-booking/confirm", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                assetId: asset.assetId,
+                bookingDate: data.bookingDate,
+                startTime: data.startTime,
+                endTime: data.endTime
+            })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok || result.error) {
+            throw new Error(result.error || "Booking failed.");
         }
 
-        /**
-         * Display successful booking details.
-         */
-        function showBookingSuccess(data) {
-            const result = document.getElementById("result");
+        showMessage(
+            "Your booking has been confirmed successfully!",
+            "success"
+        );
 
-            result.className = "result-box success";
-            result.replaceChildren();
+        // Hide available assets and suggestion
+        document.getElementById("availableAssetsBox").style.display = "none";
+        document.getElementById("suggestionBox").style.display = "none";
 
-            const heading = document.createElement("h3");
-            heading.textContent = "Booking Created Successfully!";
-            result.appendChild(heading);
+        // Display booking details
+        document.getElementById("bookingId").textContent =
+            result.bookingId ?? result.id ?? "N/A";
 
-            addDetail(result, "Booking ID", data.bookingId);
-            addDetail(result, "Asset Name", data.assetName);
-            addDetail(result, "Asset Type", data.assetType);
-            addDetail(result, "Booking Date", data.bookingDate);
-            addDetail(result, "Start Time", data.startTime);
-            addDetail(result, "End Time", data.endTime);
-            addDetail(result, "Total Rent", data.totalRent);
-            addDetail(result, "Status", data.status);
+        document.getElementById("bookedAsset").textContent =
+            result.assetName ?? asset.assetName;
 
-            result.hidden = false;
-            document.getElementById("suggestionBox").hidden = true;
-        }
+        document.getElementById("bookedDate").textContent =
+            result.bookingDate ?? data.bookingDate;
 
-        /**
-         * Add a safely rendered label/value pair.
-         */
-        function addDetail(container, label, value) {
-            const paragraph = document.createElement("p");
-            const strong = document.createElement("strong");
+        document.getElementById("bookedTime").textContent =
+            (result.startTime ?? data.startTime) +
+            " - " +
+            (result.endTime ?? data.endTime);
 
-            strong.textContent = label + ": ";
-            paragraph.appendChild(strong);
-            paragraph.appendChild(
-                document.createTextNode(
-                    value === undefined || value === null ? "" : String(value)
-                )
-            );
+        document.getElementById("bookedRent").textContent =
+            result.totalRent ?? result.total_rent ?? asset.hourlyRent;
 
-            container.appendChild(paragraph);
-        }
+        document.getElementById("bookedStatus").textContent =
+            result.status ?? "BOOKED";
 
-        /**
-         * Display a status or error message.
-         */
-        function showMessage(message, type) {
-            const result = document.getElementById("result");
+        document.getElementById("bookingDetails").style.display = "block";
 
-            result.className = "result-box " + type;
-            result.textContent = message;
-            result.hidden = false;
-        }
-    </script>
+    } catch (error) {
+
+        showMessage(error.message, "error");
+
+        bookButton.disabled = false;
+        bookButton.textContent = "Book Now";
+
+    }
+}
+
+
+// Display Suggested Slot
+function displaySuggestedSlot(data) {
+
+    suggestedBooking = {
+        bookingDate: data.bookingDate,
+        startTime: data.suggestedStartTime,
+        endTime: data.suggestedEndTime
+    };
+
+    document.getElementById("suggestionDetails").textContent =
+        "Suggested Date: " + data.bookingDate +
+        " | Suggested Time: " +
+        data.suggestedStartTime +
+        " - " +
+        data.suggestedEndTime;
+
+    document.getElementById("suggestionBox").style.display = "block";
+}
+
+
+// Check Suggested Slot
+async function checkSuggestedSlot() {
+
+    if (!suggestedBooking) {
+        showMessage("No suggested slot found.", "error");
+        return;
+    }
+
+    const promptBox = document.getElementById("bookingPrompt");
+
+    // Update the prompt with suggested time
+    promptBox.value =
+        "Book " +
+        currentAvailability.assetType +
+        " on " +
+        suggestedBooking.bookingDate +
+        " from " +
+        suggestedBooking.startTime +
+        " to " +
+        suggestedBooking.endTime;
+
+    // Check availability again only.
+    // It will NOT create a booking automatically.
+    checkAvailability();
+}
+
+</script>
 
 </body>
 </html>

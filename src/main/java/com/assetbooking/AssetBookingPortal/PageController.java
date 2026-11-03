@@ -10,4 +10,9 @@ public class PageController {
     public String aiBookingPage() {
         return "ai-booking";
     }
-}
+
+    @GetMapping("/booking/history")
+    public String bookingHistoryPage() {
+        return "booking-history";
+    }
+}	
