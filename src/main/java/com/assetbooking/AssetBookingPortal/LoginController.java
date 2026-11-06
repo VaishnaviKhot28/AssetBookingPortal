@@ -1,7 +1,6 @@
 package com.assetbooking.AssetBookingPortal;
 
 import jakarta.servlet.http.HttpSession;
-
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,35 +18,81 @@ public class LoginController {
         this.userRepository = userRepository;
     }
 
-    // Login
+    // USER Login
     @PostMapping("/login")
     public String login(
-            @RequestParam String email,
-            @RequestParam String password,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password,
             HttpSession session) {
+
+        if (email == null || email.isBlank()
+                || password == null || password.isBlank()) {
+            return "redirect:/?error=empty";
+        }
 
         String cleanEmail = email.trim().toLowerCase();
 
-        // Find user using email
-        User user = userRepository.findByEmail(cleanEmail).orElse(null);
+        User user = userRepository
+                .findByEmail(cleanEmail)
+                .orElse(null);
 
-        // Check user and password
-        if (user == null ||
-                !passwordEncoder.matches(password, user.getPassword())) {
-
-            return "redirect:/?error=invalidCredentials";
+        if (user == null || user.getPassword() == null
+                || !passwordEncoder.matches(password, user.getPassword())) {
+            return "redirect:/?error=invalid";
         }
 
-        // Login successful: save user details in session
-        session.setAttribute("displayName", user.getName());
-        session.setAttribute("userEmail", user.getEmail());
+        if (!"USER".equalsIgnoreCase(user.getRole())) {
+            return "redirect:/?error=invalid";
+        }
 
-        System.out.println("========== LOGIN DEBUG ==========");
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("Display Name: " + session.getAttribute("displayName"));
-        System.out.println("User Email: " + session.getAttribute("userEmail"));
-        System.out.println("=================================");
+        String[] parts = user.getName().trim().split("\\s+");
+
+        String initials = parts[0].substring(0, 1).toUpperCase();
+
+        if (parts.length > 1) {
+            initials += parts[parts.length - 1]
+                    .substring(0, 1).toUpperCase();
+        }
+
+        session.setAttribute("displayName", initials);
+        session.setAttribute("userEmail", user.getEmail());
+        session.setAttribute("userRole", "USER");
 
         return "redirect:/dashboard";
+    }
+
+    // USER Registration
+    @PostMapping("/register")
+    public String register(
+            @RequestParam("fullName") String fullName,
+            @RequestParam("email") String email,
+            @RequestParam("password") String password) {
+
+        if (fullName == null || fullName.isBlank()
+                || email == null || email.isBlank()
+                || password == null || password.isBlank()) {
+            return "redirect:/register?error=empty";
+        }
+
+        String cleanName = fullName.trim();
+        String cleanEmail = email.trim().toLowerCase();
+
+        if (password.length() < 6) {
+            return "redirect:/register?error=weakPassword";
+        }
+
+        if (userRepository.existsByEmail(cleanEmail)) {
+            return "redirect:/register?error=emailExists";
+        }
+
+        User user = new User();
+        user.setName(cleanName);
+        user.setEmail(cleanEmail);
+        user.setPassword(passwordEncoder.encode(password));
+        user.setRole("USER");
+
+        userRepository.save(user);
+
+        return "redirect:/?registered=true";
     }
 }

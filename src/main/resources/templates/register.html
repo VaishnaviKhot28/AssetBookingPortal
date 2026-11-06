@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | Asset Booking Portal</title>
+    <style>
+        body {
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            background:linear-gradient(135deg,#667eea,#764ba2);
+            font-family:Arial,sans-serif;
+        }
+        .container {
+            background:white;
+            width:350px;
+            max-width:90%;
+            padding:30px;
+            border-radius:15px;
+        }
+        h2 { text-align:center; color:#252b48; }
+        label { display:block; margin:15px 0 7px; }
+        input {
+            width:100%;
+            padding:12px;
+            box-sizing:border-box;
+            border:1px solid #ccc;
+            border-radius:7px;
+        }
+        button {
+            width:100%;
+            padding:13px;
+            margin-top:20px;
+            background:#667eea;
+            color:white;
+            border:0;
+            border-radius:7px;
+            cursor:pointer;
+        }
+        a { color:#667eea; }
+        p { text-align:center; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Create New Account</h2>
+
+    <form action="/register" method="post">
+
+        <label>Full Name</label>
+        <input type="text" name="fullName"
+               placeholder="Enter your full name" required>
+
+        <label>Email Address</label>
+        <input type="email" name="email"
+               placeholder="Enter your email" required>
+
+        <label>Password</label>
+        <input type="password" name="password"
+               placeholder="Create password"
+               minlength="6" required>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p><a href="/">Back to Login</a></p>
+</div>
+</body>
+</html>
