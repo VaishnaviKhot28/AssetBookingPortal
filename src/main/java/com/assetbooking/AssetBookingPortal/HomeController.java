@@ -27,14 +27,17 @@ public class HomeController {
     @Autowired
     private AssetRepository assetRepository;
 
-    // login
+    // =========================
+    // LOGIN PAGE
+    // =========================
     @GetMapping("/")
     public String loginPage() {
         return "login";
     }
 
-    //Register
-    
+    // =========================
+    // REGISTER PAGE
+    // =========================
     @GetMapping("/register")
     public String registerPage() {
         return "register";
@@ -46,28 +49,31 @@ public class HomeController {
     @GetMapping("/dashboard")
     public String dashboardPage(HttpSession session, Model model) {
 
+        System.out.println("DASHBOARD OPENED");
+        System.out.println("Dashboard Session ID: " + session.getId());
+        System.out.println("Dashboard displayName: "
+                + session.getAttribute("displayName"));
+        System.out.println("Dashboard userEmail: "
+                + session.getAttribute("userEmail"));
+
         String displayName =
                 (String) session.getAttribute("displayName");
 
         if (displayName == null) {
+            System.out.println("SESSION NOT FOUND - REDIRECTING TO LOGIN");
             return "redirect:/";
         }
 
-        long totalAssets = assetRepository.count();
-
-        long availableAssets =
-                assetRepository.countByStatus("AVAILABLE");
-
-        long activeBookings =
-                bookingRepository.countByStatus("BOOKED");
-
         model.addAttribute("displayName", displayName);
-        model.addAttribute("totalAssets", totalAssets);
-        model.addAttribute("availableAssets", availableAssets);
-        model.addAttribute("activeBookings", activeBookings);
+        model.addAttribute("totalAssets", assetRepository.count());
+        model.addAttribute("availableAssets",
+                assetRepository.countByStatus("AVAILABLE"));
+        model.addAttribute("activeBookings",
+                bookingRepository.countByStatus("BOOKED"));
+        model.addAttribute("assets", assetRepository.findAll());
 
-        return "index";
-    }
+        return "dashboard";
+        }
 
     // =========================
     // ALL ASSETS PAGE
