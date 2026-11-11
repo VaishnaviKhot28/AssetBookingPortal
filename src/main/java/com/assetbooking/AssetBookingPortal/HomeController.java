@@ -27,42 +27,17 @@ public class HomeController {
     @Autowired
     private AssetRepository assetRepository;
 
-
-@PostMapping("/register")
-public String registerUser(
-        @RequestParam String fullName,
-        @RequestParam String email,
-        @RequestParam String password,
-        Model model) {
-
-    // Check if email already exists
-    if (userRepository.existsByEmail(email)) {
-        model.addAttribute("error", "Email already registered!");
-        return "register";
-    }
-
-    // Create new user
-    User user = new User();
-    user.setName(fullName);
-    user.setEmail(email);
-
-    // Set default role
-    user.setRole("USER");
-
-    // Save user
-    user.setPassword(password);
-    userRepository.save(user);
-
-    return "redirect:/";
-}
-
-    
-    // =========================
-    // LOGIN PAGE
-    // =========================
+    // login
     @GetMapping("/")
     public String loginPage() {
         return "login";
+    }
+
+    //Register
+    
+    @GetMapping("/register")
+    public String registerPage() {
+        return "register";
     }
 
     // =========================
