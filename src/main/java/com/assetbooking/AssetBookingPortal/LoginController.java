@@ -23,7 +23,8 @@ public class LoginController {
     public String login(
             @RequestParam("email") String email,
             @RequestParam("password") String password,
-            HttpSession session) {
+            HttpSession session) { 
+    	
 
         if (email == null || email.isBlank()
                 || password == null || password.isBlank()) {
