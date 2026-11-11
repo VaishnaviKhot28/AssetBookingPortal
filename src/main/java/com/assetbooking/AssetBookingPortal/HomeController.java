@@ -25,47 +25,74 @@ public class HomeController {
     private BookingRepository bookingRepository;
 
     @Autowired
-    private AssetRepository assetRepository;    
+    private AssetRepository assetRepository;
+
+
+@PostMapping("/register")
+public String registerUser(
+        @RequestParam String fullName,
+        @RequestParam String email,
+        @RequestParam String password,
+        Model model) {
+
+    // Check if email already exists
+    if (userRepository.existsByEmail(email)) {
+        model.addAttribute("error", "Email already registered!");
+        return "register";
+    }
+
+    // Create new user
+    User user = new User();
+    user.setName(fullName);
+    user.setEmail(email);
+
+    // Set default role
+    user.setRole("USER");
+
+    // Save user
+    user.setPassword(password);
+    userRepository.save(user);
+
+    return "redirect:/";
+}
+
     
- // LOGIN PAGE
+    // =========================
+    // LOGIN PAGE
+    // =========================
     @GetMapping("/")
     public String loginPage() {
+        return "login";
+    }
+
+    // =========================
+    // DASHBOARD
+    // =========================
+    @GetMapping("/dashboard")
+    public String dashboardPage(HttpSession session, Model model) {
+
+        String displayName =
+                (String) session.getAttribute("displayName");
+
+        if (displayName == null) {
+            return "redirect:/";
+        }
+
+        long totalAssets = assetRepository.count();
+
+        long availableAssets =
+                assetRepository.countByStatus("AVAILABLE");
+
+        long activeBookings =
+                bookingRepository.countByStatus("BOOKED");
+
+        model.addAttribute("displayName", displayName);
+        model.addAttribute("totalAssets", totalAssets);
+        model.addAttribute("availableAssets", availableAssets);
+        model.addAttribute("activeBookings", activeBookings);
+
         return "index";
     }
- // =========================
- // DASHBOARD
- // =========================
- @GetMapping("/dashboard")
- public String dashboardPage(HttpSession session, Model model) {
-
-     String displayName = (String) session.getAttribute("displayName");
-
-     if (displayName == null) {
-         return "redirect:/";
-     }
-
-     // Display logged-in user's name
-     model.addAttribute("displayName", displayName);
-
-     // Fetch dashboard counts from database
-     long totalAssets = assetRepository.count();
-     long availableAssets = assetRepository.countByStatus("AVAILABLE");
-     long activeBookings = bookingRepository.countByStatus("BOOKED");
-
-     // Pass counts to dashboard.html
-     model.addAttribute("totalAssets", totalAssets);
-     model.addAttribute("availableAssets", availableAssets);
-     model.addAttribute("activeBookings", activeBookings);
-
-     // Debug information
-     System.out.println("===== DASHBOARD COUNTS =====");
-     System.out.println("Total Assets: " + totalAssets);
-     System.out.println("Available Assets: " + availableAssets);
-     System.out.println("Active Bookings: " + activeBookings);
-     System.out.println("============================");
-
-     return "dashboard";
- }
 
     // =========================
     // ALL ASSETS PAGE
@@ -302,27 +329,17 @@ public class HomeController {
     }
     
     //MEETING ROOMS 
+    
     @GetMapping("/meeting-rooms")
     public String meetingRoomsPage(HttpSession session, Model model) {
 
-        System.out.println("========== MEETING ROOMS DEBUG ==========");
-        System.out.println("Requested URL: /meeting-rooms");
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("Display Name: " + session.getAttribute("displayName"));
-        System.out.println("User Email: " + session.getAttribute("userEmail"));
-
-        String displayName =
-                (String) session.getAttribute("displayName");
+        String displayName = (String) session.getAttribute("displayName");
 
         if (displayName == null) {
-            System.out.println("No session. Redirecting to login.");
             return "redirect:/";
         }
 
         model.addAttribute("displayName", displayName);
-
-        System.out.println("Returning meeting-rooms template");
-        System.out.println("=========================================");
 
         return "meeting-rooms";
     }
@@ -356,7 +373,6 @@ public class HomeController {
         model.addAttribute("displayName", displayName);
         return "projector";
     }
-    
     // =========================
     // BOOKING SUCCESS PAGE
     // =========================
@@ -634,50 +650,51 @@ public String deleteAsset(
     return "redirect:/admin/assets";
 }
 
-//=========================
 //REPORTS
-//=========================
+
 @GetMapping("/reports")
 public String reports(HttpSession session, Model model) {
 
- String email = (String) session.getAttribute("userEmail");
+    String email = (String) session.getAttribute("userEmail");
 
- if (email == null) {
-     return "redirect:/";
- }
+    if (email == null) {
+        return "redirect:/";
+    }
 
- User user = userRepository.findByEmail(email).orElse(null);
+    User user = userRepository.findByEmail(email).orElse(null);
 
- if (user == null) {
-     session.invalidate();
-     return "redirect:/";
- }
+    if (user == null) {
+        session.invalidate();
+        return "redirect:/";
+    }
 
- model.addAttribute("displayName", user.getName());
+    model.addAttribute("displayName", user.getName());
 
- model.addAttribute("totalAssets", assetRepository.count());
+    model.addAttribute("totalAssets", assetRepository.count());
 
- model.addAttribute(
-     "availableAssets",
-     assetRepository.countByStatus("AVAILABLE")
- );
+    model.addAttribute(
+        "availableAssets",
+        assetRepository.countByStatus("AVAILABLE")
+    );
 
- model.addAttribute("totalBookings", bookingRepository.count());
+    model.addAttribute("totalBookings", bookingRepository.count());
 
- model.addAttribute(
-     "activeBookings",
-     bookingRepository.countByStatus("BOOKED")
- );
+    model.addAttribute(
+        "activeBookings",
+        bookingRepository.countByStatus("BOOKED")
+    );
 
- model.addAttribute("assets", assetRepository.findAll());
+    model.addAttribute("assets", assetRepository.findAll());
 
- // Fetch recent bookings together with their assets.
- List<Booking> recentBookings =
-         bookingRepository.findAllByOrderByBookingIdDesc();
+    model.addAttribute(
+        "recentBookings",
+        bookingRepository.findAll(
+            org.springframework.data.domain.Sort
+                .by(org.springframework.data.domain.Sort.Direction.DESC, "bookingId")
+        )
+    );
 
- model.addAttribute("recentBookings", recentBookings);
-
- return "reports";
+    return "reports";
 }
 
 //=========================
